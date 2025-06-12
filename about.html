@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Über uns - ZENOVO - Premium Bio-Kosmetik aus Deutschland</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, .font-display { font-family: 'Playfair Display', serif; }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200px 0; }
+      100% { background-position: calc(200px + 100%) 0; }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(34, 197, 94, 0.6); }
+    }
+
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fadeInUp { animation: fadeInUp 0.8s ease-out; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .animate-countUp { animation: countUp 0.8s ease-out; }
+    
+    .shimmer {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+      background-size: 200px 100%;
+      animation: shimmer 2s infinite;
+    }
+    
+    .glass-effect {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #059669, #10b981, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .team-card {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .team-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: left 0.6s ease;
+      z-index: 1;
+    }
+    
+    .team-card:hover::before {
+      left: 100%;
+    }
+    
+    .team-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    }
+
+    .value-card {
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .value-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 3rem;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(to bottom, #10b981, #34d399);
+    }
+
+    .timeline-item::after {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #10b981;
+      border: 3px solid white;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+    }
+
+    .mobile-menu {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .mobile-menu.active {
+      transform: translateX(0);
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+      
+      .hero-subtitle {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-[#f8fffe] via-[#f0fdf4] to-[#ecfdf5] text-gray-800">
+
+  <!-- Header -->
+  <header class="border-b border-white/30 shadow-2xl sticky top-0 glass-effect z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-4 py-4">
+      <a href="index.html" class="text-3xl font-display font-bold gradient-text animate-float">
+        🌿 ZENOVO
+      </a>
+      
+      <!-- Desktop Navigation -->
+      <nav class="space-x-8 hidden md:block">
+        <a href="index.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+          Startseite
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+        </a>
+        <a href="catalog.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+          Produkte
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+        </a>
+        <a href="about.html" class="text-green-600 font-medium relative group">
+          Über uns
+          <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-green-600"></span>
+        </a>
+        <a href="index.html#contact" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+          Kontakt
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+        </a>
+      </nav>
+
+      <!-- Header Actions -->
+      <div class="flex items-center space-x-4">
+        <button aria-label="Konto öffnen" class="p-2 rounded-full hover:bg-green-100 transition-all duration-300 hover:scale-110">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        </button>
+        <button aria-label="Warenkorb öffnen" class="p-2 rounded-full hover:bg-green-100 transition-all duration-300 hover:scale-110 relative">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6 8h13.2M7 13L5.4 5M17 13l1.6 8M6 21h12" />
+          </svg>
+          <span class="absolute -top-1 -right-1 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse-glow">0</span>
+        </button>
+        
+        <!-- Mobile Menu Button -->
+        <button class="md:hidden p-2 rounded-full hover:bg-green-100 transition-all duration-300" onclick="toggleMobileMenu()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed top-0 left-0 w-full h-full bg-white z-50 md:hidden">
+      <div class="p-4 border-b flex justify-between items-center">
+        <span class="text-2xl font-display font-bold gradient-text">🌿 ZENOVO</span>
+        <button onclick="toggleMobileMenu()" class="p-2 rounded-full hover:bg-gray-100">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <nav class="p-4 space-y-4">
+        <a href="index.html" class="block py-3 text-lg font-medium hover:text-green-600 transition-colors">Startseite</a>
+        <a href="catalog.html" class="block py-3 text-lg font-medium hover:text-green-600 transition-colors">Produkte</a>
+        <a href="about.html" class="block py-3 text-lg font-medium text-green-600">Über uns</a>
+        <a href="index.html#contact" class="block py-3 text-lg font-medium hover:text-green-600 transition-colors">Kontakt</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="py-16 md:py-24 bg-gradient-to-br from-[#f0fdf4] via-[#ecfdf5] to-[#d1fae5] relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent shimmer"></div>
+    <div class="absolute top-10 left-10 w-32 h-32 bg-green-200 rounded-full opacity-20 animate-float"></div>
+    <div class="absolute bottom-10 right-10 w-24 h-24 bg-green-300 rounded-full opacity-30 animate-float" style="animation-delay: 1s;"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+      <h1 class="hero-title text-4xl md:text-6xl font-display mb-6 gradient-text font-bold animate-fadeInUp">
+        Über ZENOVO
+      </h1>
+      <p class="hero-subtitle text-lg md:text-xl text-gray-700 mb-8 max-w-3xl mx-auto font-light leading-relaxed">
+        Seit 2018 entwickeln wir mit Leidenschaft nachhaltige Bio-Kosmetik und umweltfreundliche Produkte für ein bewusstes Leben
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 mb-8">
+        <span class="glass-effect px-6 py-3 rounded-full shadow-lg border border-white/40 flex items-center gap-2">
+          <span class="text-2xl">🌱</span> Nachhaltigkeit
+        </span>
+        <span class="glass-effect px-6 py-3 rounded-full shadow-lg border border-white/40 flex items-center gap-2">
+          <span class="text-2xl">💚</span> Bio-zertifiziert
+        </span>
+        <span class="glass-effect px-6 py-3 rounded-full shadow-lg border border-white/40 flex items-center gap-2">
+          <span class="text-2xl">🇩🇪</span> Made in Germany
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission Section -->
+  <section class="py-16 md:py-20 bg-gradient-to-br from-white via-green-50/20 to-white relative">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="animate-fadeInUp">
+          <h2 class="text-3xl md:text-4xl font-display mb-6 gradient-text font-bold">
+            Unsere Mission
+          </h2>
+          <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+            Bei ZENOVO glauben wir, dass Schönheit und Nachhaltigkeit Hand in Hand gehen. Unser Ziel ist es, hochwertige Bio-Kosmetik und umweltfreundliche Produkte zu entwickeln, die nicht nur Ihrem Körper, sondern auch unserem Planeten gut tun.
+          </p>
+          <p class="text-lg text-gray-700 mb-8 leading-relaxed">
+            Jedes unserer Produkte wird mit größter Sorgfalt aus natürlichen, biologisch angebauten Inhaltsstoffen hergestellt. Wir verzichten bewusst auf schädliche Chemikalien und setzen stattdessen auf die Kraft der Natur.
+          </p>
+          <div class="space-y-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <span class="text-2xl">🌿</span>
+              </div>
+              <div>
+                <h3 class="font-bold text-lg">100% natürliche Inhaltsstoffe</h3>
+                <p class="text-gray-600">Keine künstlichen Zusätze oder Chemikalien</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <span class="text-2xl">♻️</span>
+              </div>
+              <div>
+                <h3 class="font-bold text-lg">Nachhaltige Verpackung</h3>
+                <p class="text-gray-600">Recyclebar und umweltfreundlich</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <span class="text-2xl">🐰</span>
+              </div>
+              <div>
+                <h3 class="font-bold text-lg">Tierversuchsfrei</h3>
+                <p class="text-gray-600">Ethisch und verantwortungsvoll produziert</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="glass-effect rounded-3xl p-8 shadow-2xl">
+            <div class="bg-gradient-to-br from-green-100 via-green-50 to-white rounded-2xl p-8 text-center">
+              <div class="text-6xl mb-4">🌍</div>
+              <h3 class="text-2xl font-display font-bold gradient-text mb-4">
+                Für eine bessere Welt
+              </h3>
+              <p class="text-gray-600 leading-relaxed">
+                Mit jedem Kauf unterstützen Sie nachhaltige Landwirtschaft und den Schutz unserer Umwelt. Gemeinsam schaffen wir eine grünere Zukunft.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="py-16 md:py-20 bg-gradient-to-br from-[#f0fdf4] via-[#ecfdf5] to-[#d1fae5] relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50"></div>
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-display mb-4 gradient-text font-bold">
+          ZENOVO in Zahlen
+        </h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Unsere Erfolgsgeschichte spricht für sich
+        </p>
+      </div>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="text-center animate-countUp">
+          <div class="glass-effect rounded-3xl p-6 shadow-xl">
+            <div class="text-4xl md:text-5xl font-bold gradient-text mb-2">50k+</div>
+            <p class="text-gray-600 font-medium">Zufriedene Kunden</p>
+          </div>
+        </div>
+        <div class="text-center animate-countUp" style="animation-delay: 0.2s;">
+          <div class="glass-effect rounded-3xl p-6 shadow-xl">
+            <div class="text-4xl md:text-5xl font-bold gradient-text mb-2">100+</div>
+            <p class="text-gray-600 font-medium">Bio-Produkte</p>
+          </div>
+        </div>
+        <div class="text-center animate-countUp" style="animation-delay: 0.4s;">
+          <div class="glass-effect rounded-3xl p-6 shadow-xl">
+            <div class="text-4xl md:text-5xl font-bold gradient-text mb-2">7</div>
+            <p class="text-gray-600 font-medium">Jahre Erfahrung</p>
+          </div>
+        </div>
+        <div class="text-center animate-countUp" style="animation-delay: 0.6s;">
+          <div class="glass-effect rounded-3xl p-6 shadow-xl">
+            <div class="text-4xl md:text-5xl font-bold gradient-text mb-2">99%</div>
+            <p class="text-gray-600 font-medium">Kundenzufriedenheit</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values Section -->
+  <section class="py-16 md:py-20 bg-gradient-to-br from-white via-green-50/20 to-white relative">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-display mb-4 gradient-text font-bold">
+          Unsere Werte
+        </h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Diese Prinzipien leiten uns in allem, was wir tun
+        </p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="value-card glass-effect rounded-3xl p-8 shadow-xl">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+            <span class="text-3xl">🌱</span>
+          </div>
+          <h3 class="text-xl font-display font-bold text-center mb-4 gradient-text">
+            Nachhaltigkeit
+          </h3>
+          <p class="text-gray-600 text-center leading-relaxed">
+            Wir achten auf jeden Schritt unserer Produktionskette und minimieren unseren ökologischen Fußabdruck.
+          </p>
+        </div>
+        
+        <div class="value-card glass-effect rounded-3xl p-8 shadow-xl">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+            <span class="text-3xl">💎</span>
+          </div>
+          <h3 class="text-xl font-display font-bold text-center mb-4 gradient-text">
+            Qualität
+          </h3>
+          <p class="text-gray-600 text-center leading-relaxed">
+            Höchste Standards in Herstellung und Kontrolle garantieren Ihnen Premium-Produkte von ZENOVO.
+          </p>
+        </div>
+        
+        <div class="value-card glass-effect rounded-3xl p-8 shadow-xl">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+            <span class="text-3xl">🤝</span>
+          </div>
+          <h3 class="text-xl font-display font-bold text-center mb-4 gradient-text">
+            Transparenz
+          </h3>
+          <p class="text-gray-600 text-center leading-relaxed">
+            Offene Kommunikation über Inhaltsstoffe, Herstellung und Herkunft unserer Produkte.
+          </p>
+        </div>
+        
+        <div class="value-card glass-effect rounded-3xl p-8 shadow-xl">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+            <span class="text-3xl">🧪</span>
+          </div>
+          <h3 class="text-xl font-display font-bold text-center mb-4 gradient-text">
+            Innovation
+          </h3>
+          <p class="text-gray-600 text-center leading-relaxed">
+            Kontinuierliche Forschung und Entwicklung für noch bessere und wirksamere Bio-Produkte.
+          </p>
+        </div>
+        
+        <div class="value-card glass-effect rounded-3xl p-8 shadow-xl">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+            <span class="text-3xl">❤️</span>
+          </div>
+          <h3 class="text-xl font-display font-bold text-center mb-4 gradient-text">
+            Leidenschaft
+          </h3>
+          <p class="text-gray-600 text-center leading-relaxed">
+            Mit Herzblut und Begeisterung entwickeln wir Produkte, die Ihr Leben bereichern.
+          </p>
+        </div>
+        
+        <div class="value-card glass-effect rounded-3xl p-8 shadow-xl">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+            <span class="text-3xl">🌍</span>
+          </div>
+          <h3 class="text-xl font-display font-bold text-center mb-4 gradient-text">
+            Verantwortung
+          </h3>
+          <p class="text-gray-600 text-center leading-relaxed">
+            Soziale und ökologische Verantwortung stehen im Mittelpunkt unseres Handelns.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline Section -->
+  <section class="py-16 md:py-20 bg-gradient-to-br from-[#f0fdf4] via-[#ecfdf5] to-[#d1fae5] relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50"></div>
+    <div class="max-w-4xl mx-auto px-4 relative z-10">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-display mb-4 gradient-text font-bold">
+          Unsere Geschichte
+        </h2>
+        <p class="text-lg text-gray-600">
+          Der Weg von ZENOVO - von der Idee zum führenden Bio-Kosmetik Anbieter
+        </p>
+      </div>
+      
+      <div class="space-y-12">
+        <div class="timeline-item">
+          <div class="glass-effect rounded-3xl p-6 shadow-xl">
+            <div class="flex flex-col md:flex-row items-start gap-4">
+              <div class="bg-green-100 rounded-full px-4 py-2 text-green-800 font-bold text-sm">
+                2018
+              </div>
+              <div class="flex-1">
+                <h3 class="text-xl font-display font-bold mb-2 gradient-text">
+                  Die Gründung
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                  ZENOVO wird in Berlin gegründet mit der Vision, natürliche Schönheitspflege für alle zugänglich zu machen. Die ersten Bio-Shampoos und Cremes entstehen in kleiner Manufaktur.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="glass-effect rounded-3xl p-6 shadow-xl">
+            <div class="flex flex-col md:flex-row items-start gap-4">
+              <div class="bg-green-100 rounded-full px-4 py-2 text-green-800 font-bold text-sm">
+                2019
+              </div>
+              <div class="flex-1">
+                <h3 class="text-xl font-display font-bold mb-2 gradient-text">
+                  Bio-Zertifizierung
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                  Erhalt der ersten Bio-Zertifizierungen und Aufbau nachhaltiger Lieferketten mit lokalen Bauern. Start des Online-Shops mit 25 Produkten.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="glass-effect rounded-3xl p-6 shadow-xl">
+            <div class="flex flex-col md:flex-row items-start gap-4">
+              <div class="bg-green-100 rounded-full px-4 py-2 text-green-800 font-bold text-sm">
+                2021
+              </div>
+              <div class="flex-1">
+                <h3 class="text-xl font-display font-bold mb-2 gradient-text">
+                  Expansion
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                  Erweiterung des Sortiments um Haushaltswaren und nachhaltige Sportartikel. Erreichen von 10.000 zufriedenen Kunden in ganz Deutschland.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="glass-effect rounded-3xl p-6 shadow-xl">
+            <div class="flex flex-col md:flex-row items-start gap-4">
+              <div class="bg-green-100 rounded-full px-4 py-2 text-green-800 font-bold text-sm">
+                2023
+              </div>
+              <div class="flex-1">
+                <h3 class="text-xl font-display font-bold mb-2 gradient-text">
+                  Nachhaltigkeit
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                  Einführung der plastikfreien Verpackung und klimaneutraler Versand. Partnerschaft mit Umweltorganisationen für Aufforstungsprojekte.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="glass-effect rounded-3xl p-6 shadow-xl">
+            <div class="flex flex-col md:flex-row items-start gap-4">
+              <div class="bg-green-600 rounded-full px-4 py-2 text-white font-bold text-sm">
+                2025
+              </div>
+              <div class="flex-1">
+                <h3 class="text-xl font-display font-bold mb-2 gradient-text">
+                  Heute
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                  Über 50.000 zufriedene Kunden vertrauen auf ZENOVO. Unser Sortiment umfasst über 100 nachhaltige Produkte - und wir wachsen stetig weiter.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="py-16 md:py-20 bg-gradient-to-br from-white via-green-50/20 to-white relative">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-display mb-4 gradient-text font-bold">
+          Unser Team
+        </h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Die Menschen hinter ZENOVO - leidenschaftlich, kreativ und nachhaltig denkend
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="team-card glass-effect rounded-3xl overflow-hidden shadow-xl">
+          <div class="h-64 bg-gradient-to-br from-green-100 via-green-50 to-white flex items-center justify-center">
+            <div class="text-6xl">👩‍💼</div>
+          </div>
+          <div class="p-6 text-center">
+            <h3 class="text-xl font-display font-bold mb-2 gradient-text">
+              Sarah Weber
+            </h3>
+            <p class="text-green-600 font-medium mb-3">Gründerin & CEO</p>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Biochemikerin mit Leidenschaft für natürliche Inhaltsstoffe. Visionärin hinter der ZENOVO-Philosophie.
+            </p>
+          </div>
+        </div>
+        
+        <div class="team-card glass-effect rounded-3xl overflow-hidden shadow-xl">
+          <div class="h-64 bg-gradient-to-br from-blue-100 via-blue-50 to-white flex items-center justify-center">
+            <div class="text-6xl">👨‍🔬</div>
+          </div>
+          <div class="p-6 text-center">
+            <h3 class="text-xl font-display font-bold mb-2 gradient-text">
+              Dr. Michael Schmidt
+            </h3>
+            <p class="text-green-600 font-medium mb-3">Produktentwicklung</p>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              15 Jahre Erfahrung in nachhaltiger Kosmetikforschung. Experte für Bio-Wirkstoffe und Innovation.
+            </p>
+          </div>
+        </div>
+        
+        <div class="team-card glass-effect rounded-3xl overflow-hidden shadow-xl">
+          <div class="h-64 bg-gradient-to-br from-purple-100 via-purple-50 to-white flex items-center justify-center">
+            <div class="text-6xl">👩‍🎨</div>
+          </div>
+          <div class="p-6 text-center">
+            <h3 class="text-xl font-display font-bold mb-2 gradient-text">
+              Lisa Müller
+            </h3>
+            <p class="text-green-600 font-medium mb-3">Nachhaltigkeit & Design</p>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Verantwortlich für umweltfreundliche Verpackungen und nachhaltiges Markendesign bei ZENOVO.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-16 md:py-20 bg-gradient-to-br from-[#f0fdf4] via-[#ecfdf5] to-[#d1fae5] relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-50"></div>
+    <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+      <h2 class="text-3xl md:text-4xl font-display mb-6 gradient-text font-bold">
+        Werden Sie Teil der ZENOVO Familie
+      </h2>
+      <p class="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed max-w-2xl mx-auto">
+        Entdecken Sie unsere nachhaltigen Bio-Produkte und erleben Sie den Unterschied, den natürliche Pflege macht.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="catalog.html" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-full hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-xl font-semibold text-lg">
+          Produkte entdecken
+        </a>
+        <a href="#contact" class="border-2 border-green-500 text-green-600 px-8 py-4 rounded-full hover:bg-green-500 hover:text-white transition-all duration-300 font-semibold text-lg">
+          Kontakt aufnehmen
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="py-16 md:py-20 bg-gradient-to-br from-white via-green-50/20 to-white relative">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      <h3 class="text-3xl md:text-4xl font-display mb-4 gradient-text font-bold">Newsletter abonnieren</h3>
+      <p class="text-lg md:text-xl text-gray-600 mb-8 font-light leading-relaxed">
+        Erhalten Sie exklusive Einblicke hinter die Kulissen und neue Produkt-Updates direkt per E-Mail.
+      </p>
+      <form class="flex flex-col sm:flex-row gap-4 justify-center">
+        <input type="email" placeholder="E-Mail-Adresse eingeben" class="px-6 py-4 border-2 border-green-100 rounded-full w-full sm:w-auto focus:border-green-500 focus:outline-none transition-all duration-300 shadow-lg font-medium backdrop-blur-sm bg-white/80" required>
+        <button class="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-full hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-xl font-semibold">
+          Abonnieren
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-br from-[#f1f5f9] via-[#e2e8f0] to-[#cbd5e1] mt-0 py-16 md:py-20 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-30"></div>
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 text-sm mb-12">
+        <div class="lg:col-span-1">
+          <h3 class="font-display text-2xl md:text-3xl mb-6 gradient-text font-bold">🌿 ZENOVO</h3>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            Premium Bio-Kosmetik & nachhaltige Produkte aus Deutschland. 
+            Natürlich schön seit 2018.
+          </p>
+          <div class="space-y-2 text-gray-600 text-sm">
+            <p>📍 Musterstraße 123, 10115 Berlin</p>
+            <p>📞 +49 (0) 30 12345678</p>
+            <p>✉️ hello@zenovo.de</p>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-bold mb-6 text-lg md:text-xl text-gray-800">Shop</h4>
+          <ul class="space-y-3">
+            <li><a href="catalog.html" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Alle Produkte</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Bio-Kosmetik</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Haushaltswaren</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Sportartikel</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Schmuck</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-6 text-lg md:text-xl text-gray-800">Service</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Kundenservice</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">FAQ</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Rückgabe</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Versand</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-6 text-lg md:text-xl text-gray-800">Unternehmen</h4>
+          <ul class="space-y-3">
+            <li><a href="about.html" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Über uns</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Nachhaltigkeit</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Karriere</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Presse</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-300 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-600 text-sm mb-4 md:mb-0">
+          © 2025 Zenovo GmbH, Deutschland. Alle Rechte vorbehalten.
+        </p>
+        <div class="flex space-x-6 text-sm">
+          <a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Impressum</a>
+          <a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Datenschutz</a>
+          <a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">AGB</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top Button -->
+  <button id="backToTop" class="fixed bottom-8 right-8 bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-full shadow-2xl hover:from-green-600 hover:to-green-700 transition-all duration-300 hover:scale-110 opacity-0 invisible z-50" onclick="scrollToTop()">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+    </svg>
+  </button>
+
+  <script>
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('active');
+    }
+
+    // Back to Top Button functionality
+    window.addEventListener('scroll', function() {
+      const backToTopBtn = document.getElementById('backToTop');
+      if (window.pageYOffset > 300) {
+        backToTopBtn.style.opacity = '1';
+        backToTopBtn.style.visibility = 'visible';
+      } else {
+        backToTopBtn.style.opacity = '0';
+        backToTopBtn.style.visibility = 'invisible';
+      }
+    });
+
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(e) {
+      const menu = document.getElementById('mobileMenu');
+      const menuButton = document.querySelector('[onclick="toggleMobileMenu()"]');
+      
+      if (!menu.contains(e.target) && !menuButton.contains(e.target)) {
+        menu.classList.remove('active');
+      }
+    });
+
+    // Add loading animation to sections
+    document.addEventListener('DOMContentLoaded', function() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.animation = 'fadeInUp 0.8s ease-out';
+          }
+        });
+      });
+
+      document.querySelectorAll('.animate-fadeInUp, .animate-countUp').forEach(element => {
+        observer.observe(element);
+      });
+    });
+  </script>
+</body>
+</html>
