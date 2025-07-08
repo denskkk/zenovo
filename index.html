@@ -3,602 +3,730 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZENOVO - Premium Bio-Kosmetik aus Deutschland</title>
+  <title>ZENOVO - Nachhaltige Bio-Schönheit aus der Natur</title>
+  <meta name="description" content="Entdecken Sie ZENOVO - Premium Bio-Kosmetik und nachhaltige Wellness-Produkte. 100% natürlich, vegan und umweltfreundlich. Kostenloser Versand ab 35€.">
+  <meta name="keywords" content="Bio-Kosmetik, nachhaltige Schönheit, vegan, natürlich, Deutschland, Premium Kosmetik">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    h1, h2, h3, .font-display { font-family: 'Playfair Display', serif; }
+    :root {
+      --primary-green: #2d5a27;
+      --secondary-green: #4a7c59;
+      --accent-gold: #d4af37;
+      --soft-cream: #faf7f0;
+      --warm-white: #fffef9;
+    }
+    
+    body { 
+      font-family: 'Montserrat', sans-serif; 
+      background: linear-gradient(135deg, var(--warm-white) 0%, var(--soft-cream) 100%);
+    }
+    
+    .font-serif { font-family: 'Cormorant Garamond', serif; }
     
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
+      from { opacity: 0; transform: translateY(40px); }
       to { opacity: 1; transform: translateY(0); }
     }
     
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
     @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(2deg); }
     }
     
-    @keyframes shimmer {
-      0% { background-position: -200px 0; }
-      100% { background-position: calc(200px + 100%) 0; }
+    @keyframes sparkle {
+      0%, 100% { opacity: 0.3; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
     }
     
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+    @keyframes leafDance {
+      0%, 100% { transform: rotate(0deg) translateY(0px); }
+      25% { transform: rotate(5deg) translateY(-5px); }
+      75% { transform: rotate(-5deg) translateY(-3px); }
     }
     
-    .animate-fadeInUp { animation: fadeInUp 0.8s ease-out; }
-    .animate-float { animation: float 3s ease-in-out infinite; }
-    .animate-pulse-custom { animation: pulse 2s ease-in-out infinite; }
-    .shimmer {
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-      background-size: 200px 100%;
-      animation: shimmer 2s infinite;
-    }
+    .animate-fadeInUp { animation: fadeInUp 1s ease-out; }
+    .animate-slideInLeft { animation: slideInLeft 1s ease-out; }
+    .animate-slideInRight { animation: slideInRight 1s ease-out; }
+    .animate-float { animation: float 4s ease-in-out infinite; }
+    .animate-sparkle { animation: sparkle 2s ease-in-out infinite; }
+    .animate-leafDance { animation: leafDance 3s ease-in-out infinite; }
     
-    .glass-effect {
+    .glass-morphism {
+      background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.18);
     }
     
     .gradient-text {
-      background: linear-gradient(135deg, #16a34a, #22c55e, #4ade80);
+      background: linear-gradient(135deg, var(--primary-green), var(--secondary-green), var(--accent-gold));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
     
+    .hero-background {
+      background: radial-gradient(circle at 30% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(45, 90, 39, 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 40%, rgba(74, 124, 89, 0.05) 0%, transparent 50%);
+    }
+    
     .product-card {
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
     }
     
     .product-card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-12px) rotateX(5deg);
+      box-shadow: 0 25px 50px rgba(45, 90, 39, 0.15);
+    }
+    
+    .floating-element {
+      position: absolute;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .floating-element:nth-child(odd) {
+      animation-delay: -2s;
+    }
+    
+    .nature-pattern {
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(45, 90, 39, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(74, 124, 89, 0.05) 0%, transparent 50%);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+    
+    .trust-badge {
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .trust-badge::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .trust-badge:hover::before {
+      opacity: 1;
+    }
+    
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+      margin: 4rem 0;
+    }
+    
+    .text-shadow {
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    @media (max-width: 768px) {
+      .floating-element {
+        display: none;
+      }
+    }
+    
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100vh;
+      background: white;
+      box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+      transition: right 0.3s ease;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+    
+    .cart-sidebar.open { right: 0; }
+    
+    .cart-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+    
+    .cart-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--primary-green);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      z-index: 1002;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .notification.show { transform: translateX(0); }
+    
+    @media (max-width: 640px) {
+      .cart-sidebar {
+        width: 100%;
+        right: -100%;
+      }
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-[#f9f7f3] via-[#faf8f5] to-[#f1efe8] text-gray-800">
 
-  <!-- Header -->
-  <header class="border-b border-white/20 shadow-xl sticky top-0 bg-white/90 backdrop-blur-md z-50 transition-all duration-300">
-    <div class="max-w-7xl mx-auto flex justify-between items-center px-4 py-4">
-      <h1 class="text-3xl font-display font-bold gradient-text animate-float">ZENOVO</h1>
-      <nav class="space-x-8 hidden md:block">
-        <a href="index.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
-          Startseite
-          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
-        </a>
-        <a href="catalog.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
-          Produkte
-          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
-        </a>
-        <a href="about.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
-          Über uns
-          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
-        </a>
-        <a href="contact.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
-          Kontakt
-          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
-        </a>
-      </nav>
-      <div class="flex space-x-4">
-        <button aria-label="Konto öffnen" class="p-2 rounded-full hover:bg-green-100 transition-all duration-300 hover:scale-110">
+<body class="overflow-x-hidden">
+  <!-- Floating Nature Elements -->
+  <div class="floating-element top-20 left-10 text-4xl opacity-30 animate-leafDance">🌿</div>
+  <div class="floating-element top-32 right-20 text-3xl opacity-25 animate-sparkle">✨</div>
+  <div class="floating-element top-64 left-1/4 text-2xl opacity-20 animate-float">🌸</div>
+  <div class="floating-element bottom-32 right-10 text-3xl opacity-30 animate-leafDance">🍃</div>
+
+  <!-- Cart Overlay -->
+  <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="p-6 border-b border-gray-200">
+      <div class="flex justify-between items-center">
+        <h3 class="text-xl font-semibold text-gray-800">Ihr Warenkorb</h3>
+        <button onclick="closeCart()" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
-        <button aria-label="Warenkorb öffnen" class="p-2 rounded-full hover:bg-green-100 transition-all duration-300 hover:scale-110 relative">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6 8h13.2M7 13L5.4 5M17 13l1.6 8M6 21h12" />
-          </svg>
-          <span class="absolute -top-1 -right-1 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+      </div>
+    </div>
+    <div class="p-6">
+      <div id="cartItems">
+        <p class="text-gray-500 text-center py-8">Ihr Warenkorb ist leer</p>
+      </div>
+      <div class="border-t pt-4 mt-4" id="cartTotal" style="display: none;">
+        <div class="flex justify-between items-center mb-4">
+          <span class="font-semibold text-lg">Gesamt:</span>
+          <span class="font-bold text-xl gradient-text" id="totalPrice">€0.00</span>
+        </div>
+        <button class="w-full btn-primary text-white py-3 rounded-full font-semibold">
+          Zur Kasse gehen
         </button>
       </div>
     </div>
-  </header>
+  </div>
 
-  <!-- Hero Banner -->
-  <section id="home" class="text-center py-24 bg-gradient-to-br from-[#fff8f0] via-[#f1efe8] to-[#e8f5e8] relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent shimmer"></div>
-    <div class="max-w-6xl mx-auto px-4 relative z-10">
-      <img src="logo.png" alt="Zenovo logo" class="mx-auto mb-8 w-64 animate-float drop-shadow-2xl">
-      <h2 class="text-3xl md:text-5xl font-display leading-relaxed mb-6 animate-fadeInUp gradient-text font-bold">
-        Premium Bio-Kosmetik aus Deutschland
-      </h2>
-      <p class="text-xl md:text-2xl font-display mb-4 text-gray-700">
-        Natürliche Schönheit • Nachhaltige Pflege • Zertifizierte Qualität
-      </p>
-      <p class="mt-8 text-xl font-light max-w-4xl mx-auto text-gray-700 leading-relaxed animate-fadeInUp">
-        Entdecken Sie unsere exklusive Kollektion an Bio-Kosmetik, Haushaltswaren, Sportartikeln und handgefertigtem Schmuck. 
-        Jedes Produkt wird mit Liebe zur Natur und höchsten Qualitätsstandards in Deutschland hergestellt.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center mt-10">
-        <a href="#products" class="inline-block px-10 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-full hover:from-green-700 hover:to-green-800 transition-all duration-300 transform hover:scale-105 shadow-2xl font-semibold text-lg">
-          Jetzt einkaufen
-        </a>
-        <a href="#about" class="inline-block px-10 py-4 bg-white/80 text-green-700 rounded-full hover:bg-white transition-all duration-300 transform hover:scale-105 shadow-xl font-semibold text-lg border border-green-200">
-          Mehr erfahren
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Trusted Labels -->
-  <section class="py-20 bg-gradient-to-r from-[#faf9f6] to-[#f8f6f2] relative">
-    <div class="max-w-6xl mx-auto px-4">
-      <h3 class="text-3xl font-display text-center mb-12 gradient-text font-bold">Unsere Qualitätsversprechen</h3>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-        <div class="bg-white/70 backdrop-blur-sm p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-white/40">
-          <img src="cat1.png" class="mx-auto mb-4 w-20 h-20" alt="Bio">
-          <h4 class="font-bold text-lg mb-2 gradient-text">Bio-zertifiziert</h4>
-          <p class="text-gray-600 text-sm">Kontrolliert biologische Inhaltsstoffe</p>
-        </div>
-        <div class="bg-white/70 backdrop-blur-sm p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-white/40">
-          <img src="cat2.png" class="mx-auto mb-4 w-20 h-20" alt="Vegan">
-          <h4 class="font-bold text-lg mb-2 gradient-text">100% Vegan</h4>
-          <p class="text-gray-600 text-sm">Tierversuchsfrei & ohne tierische Inhaltsstoffe</p>
-        </div>
-        <div class="bg-white/70 backdrop-blur-sm p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-white/40">
-          <img src="cat3.png" class="mx-auto mb-4 w-20 h-20" alt="Nachhaltig">
-          <h4 class="font-bold text-lg mb-2 gradient-text">Klimaneutral</h4>
-          <p class="text-gray-600 text-sm">Nachhaltige Produktion & Verpackung</p>
-        </div>
-        <div class="bg-white/70 backdrop-blur-sm p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-white/40">
-          <img src="https://img.icons8.com/ios-filled/50/europe.png" class="mx-auto mb-4 w-20 h-20" alt="EU">
-          <h4 class="font-bold text-lg mb-2 gradient-text">Made in Germany</h4>
-          <p class="text-gray-600 text-sm">Höchste deutsche Qualitätsstandards</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Product Categories -->
-  <section id="products" class="py-20 bg-gradient-to-br from-white via-green-50/20 to-white relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-green-100/10 to-transparent opacity-50"></div>
-    <div class="max-w-7xl mx-auto px-4 relative z-10">
-      <h3 class="text-4xl font-display text-center mb-16 gradient-text font-bold">Unsere Produktkategorien</h3>
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <!-- Bio-Kosmetik -->
-        <div class="product-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/40">
-          <div class="h-48 bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-            <img src="https://img.icons8.com/ios-filled/100/natural-food.png" alt="Bio-Kosmetik" class="w-20 h-20">
-          </div>
-          <div class="p-6">
-            <h4 class="font-bold text-xl mb-3 gradient-text">Bio-Kosmetik</h4>
-            <p class="text-gray-600 mb-4">Natürliche Hautpflege, Seren und Cremes für alle Hauttypen</p>
-            <a href="#" class="text-green-600 hover:text-green-800 font-semibold">Entdecken →</a>
-          </div>
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 glass-morphism transition-all duration-300" id="navbar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-serif font-bold gradient-text">🌿 ZENOVO</h1>
         </div>
         
-        <!-- Haushaltswaren -->
-        <div class="product-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/40">
-          <div class="h-48 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-            <img src="https://img.icons8.com/ios-filled/100/home.png" alt="Haushaltswaren" class="w-20 h-20">
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-8">
+            <a href="index.html" class="text-gray-700 hover:text-green-700 px-3 py-2 text-sm font-medium transition-colors">Startseite</a>
+            <a href="catalog.html" class="text-gray-700 hover:text-green-700 px-3 py-2 text-sm font-medium transition-colors">Produkte</a>
+            <a href="about.html" class="text-gray-700 hover:text-green-700 px-3 py-2 text-sm font-medium transition-colors">Über uns</a>
+            <a href="#contact" class="text-gray-700 hover:text-green-700 px-3 py-2 text-sm font-medium transition-colors">Kontakt</a>
           </div>
-          <div class="p-6">
-            <h4 class="font-bold text-xl mb-3 gradient-text">Haushaltswaren</h4>
-            <p class="text-gray-600 mb-4">Nachhaltige Reinigungsprodukte und Küchenzubehör</p>
-            <a href="#" class="text-green-600 hover:text-green-800 font-semibold">Entdecken →</a>
-          </div>
-        </div>
-        
-        <!-- Sportartikel -->
-        <div class="product-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/40">
-          <div class="h-48 bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
-            <img src="https://img.icons8.com/ios-filled/100/sports-mode.png" alt="Sportartikel" class="w-20 h-20">
-          </div>
-          <div class="p-6">
-            <h4 class="font-bold text-xl mb-3 gradient-text">Sportartikel</h4>
-            <p class="text-gray-600 mb-4">Umweltfreundliche Yoga-Matten und Fitness-Zubehör</p>
-            <a href="#" class="text-green-600 hover:text-green-800 font-semibold">Entdecken →</a>
-          </div>
-        </div>
-        
-        <!-- Schmuck -->
-        <div class="product-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/40">
-          <div class="h-48 bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
-            <img src="https://img.icons8.com/ios-filled/100/diamond.png" alt="Schmuck" class="w-20 h-20">
-          </div>
-          <div class="p-6">
-            <h4 class="font-bold text-xl mb-3 gradient-text">Schmuck</h4>
-            <p class="text-gray-600 mb-4">Handgefertigte Einzelstücke aus nachhaltigen Materialien</p>
-            <a href="#" class="text-green-600 hover:text-green-800 font-semibold">Entdecken →</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Featured Product -->
-  <section class="py-20 bg-gradient-to-br from-white via-green-50/30 to-white relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-green-100/20 to-transparent opacity-50"></div>
-    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-16 items-center relative z-10">
-      <div class="relative group">
-        <img src="zenovoset.png" alt="Zenovo Premium Naturpflege Set" class="w-full max-w-lg mx-auto rounded-3xl shadow-2xl transition-all duration-500 group-hover:scale-105">
-        <div class="absolute inset-0 bg-gradient-to-t from-green-600/20 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
-        <div class="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse-custom">
-          Bestseller
-        </div>
-      </div>
-      <div class="space-y-6">
-        <h2 class="text-4xl md:text-5xl font-display mb-6 gradient-text font-bold">Zenovo Premium Naturpflege Set</h2>
-        <p class="text-xl leading-relaxed text-gray-700 font-light">Eine luxuriöse Kombination für die tägliche Hautpflege – mit Bio-Gesichtscreme, Anti-Aging Serum und hochwertiger Trockenbürste aus FSC-zertifiziertem Buchenholz.</p>
-        
-        <div class="bg-green-50 p-6 rounded-2xl border border-green-100">
-          <h5 class="font-bold text-lg mb-3 text-green-800">Das Set enthält:</h5>
-          <ul class="space-y-2 text-gray-700">
-            <li class="flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>Bio-Gesichtscreme (50ml) - Für alle Hauttypen</li>
-            <li class="flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>Anti-Aging Serum (30ml) - Mit Hyaluronsäure</li>
-            <li class="flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>Körperbürste - Aus nachhaltiger Forstwirtschaft</li>
-          </ul>
         </div>
         
         <div class="flex items-center space-x-4">
-          <div class="flex text-yellow-400">
-            <span>⭐⭐⭐⭐⭐</span>
-          </div>
-          <span class="text-gray-600">(124 Bewertungen)</span>
+          <button class="p-2 rounded-full hover:bg-white/50 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </button>
+          <button onclick="openCart()" class="p-2 rounded-full hover:bg-white/50 transition-colors relative">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            </svg>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" id="cartCount">0</span>
+          </button>
+          <button class="md:hidden p-2 rounded-full hover:bg-white/50" onclick="toggleMobileMenu()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Mobile menu -->
+      <div id="mobileMenu" class="md:hidden hidden">
+        <div class="px-2 pt-2 pb-3 space-y-1 bg-white/90 rounded-lg mt-2">
+          <a href="#home" class="block px-3 py-2 text-gray-700 hover:text-green-700">Startseite</a>
+          <a href="#products" class="block px-3 py-2 text-gray-700 hover:text-green-700">Produkte</a>
+          <a href="#about" class="block px-3 py-2 text-gray-700 hover:text-green-700">Über uns</a>
+          <a href="#contact" class="block px-3 py-2 text-gray-700 hover:text-green-700">Kontakt</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="min-h-screen flex items-center justify-center hero-background relative overflow-hidden pt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="animate-fadeInUp">
+        <div class="mb-8">
+          <h2 class="text-5xl md:text-7xl font-serif font-bold gradient-text mb-6 text-shadow">
+            Natürliche Schönheit
+          </h2>
+          <h3 class="text-2xl md:text-3xl font-light text-gray-700 mb-8">
+            Nachhaltige Bio-Kosmetik für bewusste Menschen
+          </h3>
         </div>
         
-        <div class="flex items-center space-x-4">
-          <p class="font-bold text-4xl gradient-text">€29,90</p>
-          <span class="text-gray-500 line-through text-xl">€39,90</span>
-          <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">-25%</span>
+        <p class="text-lg md:text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+          Entdecken Sie die Kraft der Natur mit unserer exklusiven Kollektion an Bio-Kosmetik. 
+          Jedes Produkt wird mit Liebe und Respekt für Mensch und Umwelt hergestellt.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <a href="#products" class="btn-primary text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all">
+            Kollektion entdecken
+          </a>
+          <a href="#about" class="glass-morphism px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/40 transition-all">
+            Unsere Geschichte
+          </a>
         </div>
-        
-        <button class="bg-gradient-to-r from-gray-400 to-gray-500 text-white px-8 py-4 rounded-full cursor-not-allowed opacity-75 font-semibold text-lg w-full md:w-auto" disabled>
-          Ausverkauft - Bald wieder verfügbar
-        </button>
-        
-        <div class="text-sm text-gray-600">
-          <p>📦 Kostenloser Versand ab 25€</p>
-          <p>🔄 30 Tage Rückgaberecht</p>
-          <p>🇩🇪 Hergestellt in Deutschland</p>
+      </div>
+    </div>
+    
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Trust Indicators -->
+  <section class="py-20 nature-pattern">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="trust-badge text-center group">
+          <div class="text-5xl mb-4 group-hover:animate-bounce transition-all">🇩🇪</div>
+          <h3 class="font-semibold text-gray-800 mb-2">Made in Germany</h3>
+          <p class="text-sm text-gray-600">Höchste Qualitätsstandards</p>
+        </div>
+        <div class="trust-badge text-center group">
+          <div class="text-5xl mb-4 group-hover:animate-bounce transition-all">🌱</div>
+          <h3 class="font-semibold text-gray-800 mb-2">100% Bio-zertifiziert</h3>
+          <p class="text-sm text-gray-600">Natürliche Inhaltsstoffe</p>
+        </div>
+        <div class="trust-badge text-center group">
+          <div class="text-5xl mb-4 group-hover:animate-bounce transition-all">🐰</div>
+          <h3 class="font-semibold text-gray-800 mb-2">Tierversuchsfrei</h3>
+          <p class="text-sm text-gray-600">Ethisch & vegan</p>
+        </div>
+        <div class="trust-badge text-center group">
+          <div class="text-5xl mb-4 group-hover:animate-bounce transition-all">♻️</div>
+          <h3 class="font-semibold text-gray-800 mb-2">Nachhaltig</h3>
+          <p class="text-sm text-gray-600">Umweltfreundlich verpackt</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- More Products -->
-  <section class="py-20 bg-gradient-to-br from-[#faf9f6] to-[#f1efe8] relative">
-    <div class="max-w-7xl mx-auto px-4">
-      <h3 class="text-4xl font-display text-center mb-16 gradient-text font-bold">Weitere beliebte Produkte</h3>
-      <div class="grid md:grid-cols-3 gap-8">
+  <!-- Featured Products -->
+  <section id="products" class="py-20 bg-gradient-to-br from-green-50 to-blue-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16 animate-fadeInUp">
+        <h2 class="text-4xl md:text-5xl font-serif font-bold gradient-text mb-6">
+          Bestseller Kollektion
+        </h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+          Unsere beliebtesten Produkte, die bereits tausende Kunden überzeugt haben
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- Product 1 -->
-        <div class="product-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/40">
-          <div class="h-64 bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center p-4">
-            <img src="bioshampoo.png" alt="Bio-Shampoo" class="w-full h-full object-contain">
+        <div class="product-card bg-white rounded-2xl overflow-hidden shadow-lg">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&crop=center" 
+                 alt="Bio Gesichtscreme" 
+                 class="w-full h-64 object-cover">
+            <div class="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              Bestseller
+            </div>
           </div>
           <div class="p-6">
-            <h4 class="font-bold text-xl mb-2 gradient-text">Bio-Shampoo Lavendel</h4>
-            <p class="text-gray-600 mb-4">Sanfte Reinigung für alle Haartypen mit beruhigendem Lavendel</p>
+            <h3 class="text-xl font-semibold mb-2">Bio Gesichtscreme Rose</h3>
+            <p class="text-gray-600 mb-4">
+              Luxuriöse Anti-Aging Creme mit Bio-Rosenöl und Hyaluronsäure für strahlende Haut.
+            </p>
             <div class="flex items-center justify-between">
-              <span class="font-bold text-2xl gradient-text">€16,90</span>
-              <button class="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition-colors">
+              <span class="text-2xl font-bold gradient-text">€45.90</span>
+              <button onclick="addToCart('rose-cream', 'Bio Gesichtscreme Rose', 45.90, 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&crop=center')" 
+                      class="btn-primary text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all">
                 In den Warenkorb
               </button>
             </div>
           </div>
         </div>
-        
+
         <!-- Product 2 -->
-        <div class="product-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/40">
-          <div class="h-64 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center p-4">
-            <img src="bioshampoo.png" alt="Bambus Schwämme" class="w-full h-full object-contain">
+        <div class="product-card bg-white rounded-2xl overflow-hidden shadow-lg">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400&h=300&fit=crop&crop=center" 
+                 alt="Natürliches Shampoo" 
+                 class="w-full h-64 object-cover">
+            <div class="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              Neu
+            </div>
           </div>
           <div class="p-6">
-            <h4 class="font-bold text-xl mb-2 gradient-text">Bambus Küchenschwämme</h4>
-            <p class="text-gray-600 mb-4">Nachhaltige Alternative zu herkömmlichen Schwämmen</p>
+            <h3 class="text-xl font-semibold mb-2">Argan-Kokos Shampoo</h3>
+            <p class="text-gray-600 mb-4">
+              Sulfatfreies Shampoo mit Bio-Arganöl und Kokosöl für geschmeidiges, glänzendes Haar.
+            </p>
             <div class="flex items-center justify-between">
-              <span class="font-bold text-2xl gradient-text">€8,90</span>
-              <button class="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition-colors">
+              <span class="text-2xl font-bold gradient-text">€24.90</span>
+              <button onclick="addToCart('argan-shampoo', 'Argan-Kokos Shampoo', 24.90, 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400&h=300&fit=crop&crop=center')" 
+                      class="btn-primary text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all">
                 In den Warenkorb
               </button>
             </div>
           </div>
         </div>
-        
+
         <!-- Product 3 -->
-        <div class="product-card bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/40">
-          <div class="h-64 bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center p-4">
-            <img src="bioshampoo.png" alt="Holz-Ring" class="w-full h-full object-contain">
+        <div class="product-card bg-white rounded-2xl overflow-hidden shadow-lg">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1598662957563-ee4965d4d72c?w=400&h=300&fit=crop&crop=center" 
+                 alt="Körperöl" 
+                 class="w-full h-64 object-cover">
+            <div class="absolute top-4 left-4 bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              Limited
+            </div>
           </div>
           <div class="p-6">
-            <h4 class="font-bold text-xl mb-2 gradient-text">Holz-Ring "Natur"</h4>
-            <p class="text-gray-600 mb-4">Handgefertigter Ring aus heimischem Ahornholz</p>
+            <h3 class="text-xl font-semibold mb-2">Luxus Körperöl Lavendel</h3>
+            <p class="text-gray-600 mb-4">
+              Entspannendes Körperöl mit Bio-Lavendel und Jojoba für samtweiche Haut.
+            </p>
             <div class="flex items-center justify-between">
-              <span class="font-bold text-2xl gradient-text">€24,90</span>
-              <button class="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition-colors">
+              <span class="text-2xl font-bold gradient-text">€32.90</span>
+              <button onclick="addToCart('lavender-oil', 'Luxus Körperöl Lavendel', 32.90, 'https://images.unsplash.com/photo-1598662957563-ee4965d4d72c?w=400&h=300&fit=crop&crop=center')" 
+                      class="btn-primary text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all">
                 In den Warenkorb
               </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- Gallery -->
-  <section class="grid md:grid-cols-2 gap-0 relative">
-    <div class="relative group overflow-hidden">
-      <img src="newarrivals.png" alt="Neue Produkte" class="w-full h-96 object-cover transition-all duration-700 group-hover:scale-110">
-      <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-        <div class="text-center text-white">
-          <h4 class="text-2xl font-display mb-4">Neue Produkte</h4>
-          <a href="#" class="bg-white/20 backdrop-blur-sm px-8 py-4 rounded-full border border-white/30 hover:bg-white/30 transition-all duration-300">
-            Neuheiten entdecken
-          </a>
-        </div>
-      </div>
-    </div>
-    <div class="relative group overflow-hidden">
-      <img src="bestseller.png" alt="Bestseller" class="w-full h-96 object-cover transition-all duration-700 group-hover:scale-110">
-      <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-        <div class="text-center text-white">
-          <h4 class="text-2xl font-display mb-4">Bestseller</h4>
-          <a href="#" class="bg-white/20 backdrop-blur-sm px-8 py-4 rounded-full border border-white/30 hover:bg-white/30 transition-all duration-300">
-            Bestseller ansehen
-          </a>
-        </div>
+      <div class="text-center mt-12">
+        <a href="catalog.html" class="btn-primary text-white px-8 py-3 rounded-full font-semibold text-lg hover:shadow-lg transition-all">
+          Alle Produkte entdecken
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- About Us Section -->
-  <section id="about" class="py-20 bg-gradient-to-br from-white via-green-50/20 to-white relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-green-100/10 to-transparent opacity-50"></div>
-    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-16 items-center relative z-10">
-      <div class="space-y-6">
-        <h3 class="text-4xl font-display gradient-text font-bold">Unsere Geschichte</h3>
-        <p class="text-xl text-gray-700 leading-relaxed">
-          Seit 2018 entwickeln wir bei Zenovo Premium Bio-Kosmetik und nachhaltige Produkte im Herzen Deutschlands. 
-          Unser Ziel ist es, natürliche Schönheit und Umweltbewusstsein zu vereinen.
-        </p>
-        <p class="text-lg text-gray-600 leading-relaxed">
-          Jedes unserer Produkte wird mit größter Sorgfalt und unter strengsten Qualitätskontrollen hergestellt. 
-          Wir verwenden ausschließlich biologische Inhaltsstoffe und verzichten komplett auf schädliche Chemikalien.
-        </p>
-        <div class="grid grid-cols-2 gap-4 mt-8">
-          <div class="text-center">
-            <div class="text-3xl font-bold gradient-text">7+</div>
-            <div class="text-gray-600">Jahre Erfahrung</div>
+  <div class="section-divider"></div>
+
+  <!-- About Section -->
+  <section id="about" class="py-20 nature-pattern">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="animate-slideInLeft">
+          <h2 class="text-4xl md:text-5xl font-serif font-bold gradient-text mb-8">
+            Unsere Mission: Schönheit im Einklang mit der Natur
+          </h2>
+          <div class="space-y-6 text-lg text-gray-700">
+            <p>
+              Bei ZENOVO glauben wir, dass wahre Schönheit aus der Natur kommt. Seit unserer Gründung 2018 
+              entwickeln wir Premium Bio-Kosmetik, die nicht nur Ihre Haut pflegt, sondern auch unseren 
+              Planeten respektiert.
+            </p>
+            <p>
+              Jedes unserer Produkte wird mit größter Sorgfalt und Leidenschaft hergestellt. Wir verwenden 
+              ausschließlich natürliche, biologische Inhaltsstoffe aus nachhaltigem Anbau und verzichten 
+              komplett auf schädliche Chemikalien.
+            </p>
+            <p>
+              Unsere Vision ist es, eine Welt zu schaffen, in der Schönheitspflege und Umweltschutz 
+              Hand in Hand gehen. Mit jedem Kauf unterstützen Sie nicht nur Ihre eigene Gesundheit, 
+              sondern auch den Schutz unserer natürlichen Ressourcen.
+            </p>
           </div>
-          <div class="text-center">
-            <div class="text-3xl font-bold gradient-text">50k+</div>
-            <div class="text-gray-600">Zufriedene Kunden</div>
+          <div class="mt-8">
+            <a href="#contact" class="btn-primary text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all">
+              Mehr über uns erfahren
+            </a>
           </div>
         </div>
-      </div>
-      <div class="relative">
-        <div class="w-full h-96 bg-gradient-to-br from-green-100 to-green-200 rounded-3xl flex items-center justify-center text-8xl">
-          🌿
+        <div class="animate-slideInRight">
+          <div class="grid grid-cols-2 gap-4">
+            <img src="https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=300&h=300&fit=crop&crop=center" 
+                 alt="Natürliche Inhaltsstoffe" 
+                 class="rounded-2xl shadow-lg">
+            <img src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=300&h=300&fit=crop&crop=center" 
+                 alt="Bio Laboratorium" 
+                 class="rounded-2xl shadow-lg mt-8">
+            <img src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=300&h=300&fit=crop&crop=center" 
+                 alt="Nachhaltige Verpackung" 
+                 class="rounded-2xl shadow-lg -mt-8">
+            <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=300&h=300&fit=crop&crop=center" 
+                 alt="Hautpflege Routine" 
+                 class="rounded-2xl shadow-lg">
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Newsletter -->
-  <section class="py-20 bg-gradient-to-br from-[#fffefc] via-[#faf8f5] to-[#f1efe8] relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-50"></div>
-    <div class="max-w-2xl mx-auto px-4 text-center relative z-10">
-      <h3 class="text-4xl font-display mb-4 gradient-text font-bold">Newsletter abonnieren</h3>
-      <p class="text-xl text-gray-600 mb-8 font-light">
-        Erhalten Sie exklusive Angebote, neue Produkt-Updates und wertvolle Pflegetipps direkt per E-Mail.
-      </p>
-      <form class="flex flex-col sm:flex-row gap-4 justify-center">
-        <input type="email" placeholder="E-Mail-Adresse eingeben" class="px-6 py-4 border-2 border-green-100 rounded-full w-full sm:w-auto focus:border-green-500 focus:outline-none transition-all duration-300 shadow-lg font-medium" required>
-        <button class="bg-gradient-to-r from-green-600 to-green-700 text-white px-8 py-4 rounded-full hover:from-green-700 hover:to-green-800 transition-all duration-300 transform hover:scale-105 shadow-xl font-semibold">
-          Jetzt abonnieren
-        </button>
-      </form>
-      <p class="text-sm text-gray-500 mt-4">
-        * Jederzeit abbestellbar. Datenschutz ist uns wichtig.
-      </p>
-    </div>
-  </section>
-
-  <!-- Customer Reviews -->
-  <section class="py-20 bg-gradient-to-br from-[#faf9f6] to-[#f1efe8] relative">
-    <div class="max-w-7xl mx-auto px-4 text-center">
-      <h3 class="text-4xl font-display mb-4 gradient-text font-bold">Das sagen unsere Kunden</h3>
-      <p class="text-xl text-gray-600 mb-12">Über 5.000 positive Bewertungen sprechen für sich</p>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-white/80 backdrop-blur-sm shadow-2xl p-8 rounded-3xl border border-white/40 hover:shadow-3xl transition-all duration-300 hover:scale-105">
-          <div class="flex justify-center mb-4 text-yellow-400">
-            <span>⭐⭐⭐⭐⭐</span>
-          </div>
-          <p class="text-gray-600 mb-6 text-lg italic leading-relaxed">
-            "Die Produkte von Zenovo sind einfach fantastisch! Meine Haut fühlt sich so viel besser an. 
-            Besonders das Anti-Aging Serum ist ein Traum!"
-          </p>
-          <div class="font-bold text-lg gradient-text">Anna K.</div>
-          <div class="text-gray-500 text-sm">Verifizierter Kauf</div>
-        </div>
-        <div class="bg-white/80 backdrop-blur-sm shadow-2xl p-8 rounded-3xl border border-white/40 hover:shadow-3xl transition-all duration-300 hover:scale-105">
-          <div class="flex justify-center mb-4 text-yellow-400">
-            <span>⭐⭐⭐⭐⭐</span>
-          </div>
-          <p class="text-gray-600 mb-6 text-lg italic leading-relaxed">
-            "Ich liebe die nachhaltige Philosophie und die Qualität der Produkte. 
-            Endlich eine Marke, der ich vertrauen kann. Absolut empfehlenswert!"
-          </p>
-          <div class="font-bold text-lg gradient-text">Markus L.</div>
-          <div class="text-gray-500 text-sm">Stammkunde seit 2022</div>
-        </div>
-        <div class="bg-white/80 backdrop-blur-sm shadow-2xl p-8 rounded-3xl border border-white/40 hover:shadow-3xl transition-all duration-300 hover:scale-105">
-          <div class="flex justify-center mb-4 text-yellow-400">
-            <span>⭐⭐⭐⭐⭐</span>
-          </div>
-          <p class="text-gray-600 mb-6 text-lg italic leading-relaxed">
-            "Schnelle Lieferung, nachhaltige Verpackung und tolle Produkte. 
-            Das Lavendel-Shampoo riecht himmlisch! Zenovo hat mich komplett überzeugt!"
-          </p>
-          <div class="font-bold text-lg gradient-text">Sophie M.</div>
-          <div class="text-gray-500 text-sm">Erste Bestellung</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Benefits Section -->
-  <section class="py-20 bg-gradient-to-br from-white via-green-50/20 to-white relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-green-100/10 to-transparent opacity-50"></div>
-    <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
-      <h3 class="text-4xl font-display mb-16 gradient-text font-bold">Warum Zenovo wählen?</h3>
-      <div class="grid md:grid-cols-3 gap-12">
-        <div class="bg-white/60 backdrop-blur-sm p-10 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 border border-white/40">
-          <div class="w-24 h-24 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
-            <img src="https://img.icons8.com/ios-filled/50/16a34a/eco-friendly.png" alt="Eco-friendly" class="w-12 h-12">
-          </div>
-          <h4 class="font-bold mb-4 text-2xl gradient-text">100% Nachhaltigkeit</h4>
-          <p class="text-gray-600 text-lg leading-relaxed">
-            Plastikfreie Verpackung, CO₂-neutraler Versand und Inhaltsstoffe aus kontrolliert biologischem Anbau.
-          </p>
-        </div>
-        <div class="bg-white/60 backdrop-blur-sm p-10 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 border border-white/40">
-          <div class="w-24 h-24 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
-            <img src="https://img.icons8.com/ios-filled/50/16a34a/quality.png" alt="Quality" class="w-12 h-12">
-          </div>
-          <h4 class="font-bold mb-4 text-2xl gradient-text">Premium Qualität</h4>
-          <p class="text-gray-600 text-lg leading-relaxed">
-            Dermatologisch getestet, nach höchsten deutschen Standards produziert und regelmäßig kontrolliert.
-          </p>
-        </div>
-        <div class="bg-white/60 backdrop-blur-sm p-10 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 border border-white/40">
-          <div class="w-24 h-24 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
-            <img src="https://img.icons8.com/ios-filled/50/16a34a/customer-support.png" alt="Support" class="w-12 h-12">
-          </div>
-          <h4 class="font-bold mb-4 text-2xl gradient-text">Exzellenter Service</h4>
-          <p class="text-gray-600 text-lg leading-relaxed">
-            Persönliche Beratung, 30 Tage Geld-zurück-Garantie und kostenloser Versand ab 25€.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Social Media Links -->
-  <section class="py-16 bg-gradient-to-br from-[#f1efe8] to-[#e8f5e8] relative">
-    <div class="max-w-5xl mx-auto px-4 text-center">
-      <h3 class="text-4xl font-display mb-6 gradient-text font-bold">Folgen Sie uns</h3>
-      <p class="text-xl text-gray-600 mb-12">Bleiben Sie auf dem Laufenden mit Daily-Beauty-Tipps und Produktneuheiten</p>
-      <div class="flex justify-center space-x-8">
-        <a href="#" aria-label="Facebook" class="bg-white/70 backdrop-blur-sm p-6 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 border border-white/40 group">
-          <img src="https://img.icons8.com/ios-filled/50/facebook.png" alt="Facebook" class="w-8 h-8 group-hover:scale-110 transition-transform">
-        </a>
-        <a href="#" aria-label="Instagram" class="bg-white/70 backdrop-blur-sm p-6 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 border border-white/40 group">
-          <img src="https://img.icons8.com/ios-filled/50/instagram-new.png" alt="Instagram" class="w-8 h-8 group-hover:scale-110 transition-transform">
-        </a>
-        <a href="#" aria-label="Twitter" class="bg-white/70 backdrop-blur-sm p-6 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 border border-white/40 group">
-          <img src="https://img.icons8.com/ios-filled/50/twitter.png" alt="Twitter" class="w-8 h-8 group-hover:scale-110 transition-transform">
-        </a>
-        <a href="#" aria-label="YouTube" class="bg-white/70 backdrop-blur-sm p-6 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 border border-white/40 group">
-          <img src="https://img.icons8.com/ios-filled/50/youtube-play.png" alt="YouTube" class="w-8 h-8 group-hover:scale-110 transition-transform">
-        </a>
+  <section class="py-20 bg-gradient-to-r from-green-600 to-green-800 text-white relative overflow-hidden">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      <div class="animate-fadeInUp">
+        <h2 class="text-3xl md:text-4xl font-serif font-bold mb-6">
+          Bleiben Sie in Verbindung mit der Natur
+        </h2>
+        <p class="text-xl mb-8 opacity-90">
+          Erhalten Sie exklusive Angebote, Beauty-Tipps und Neuigkeiten aus der Welt der Bio-Kosmetik
+        </p>
+        <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" onsubmit="subscribeNewsletter(event)">
+          <input type="email" 
+                 placeholder="Ihre E-Mail-Adresse" 
+                 required 
+                 class="flex-1 px-6 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-white/30 placeholder-gray-500">
+          <button type="submit" 
+                  class="px-8 py-3 bg-white text-green-600 rounded-full font-semibold hover:bg-gray-100 transition-colors shadow-lg">
+            Anmelden
+          </button>
+        </form>
+        <p class="text-sm mt-6 opacity-75">
+          🔒 Ihre Daten sind sicher. Keine Weitergabe an Dritte. Jederzeit abmeldbar.
+        </p>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer id="contact" class="bg-gradient-to-br from-[#f1efe8] via-[#e8f5e8] to-[#f1efe8] mt-0 py-20 relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-30"></div>
-    <div class="max-w-7xl mx-auto px-4 relative z-10">
-      <div class="grid md:grid-cols-4 gap-12 text-sm mb-12">
-        <div>
-          <h3 class="font-display text-3xl mb-6 gradient-text font-bold">ZENOVO</h3>
-          <p class="text-gray-600 leading-relaxed mb-4">
-            Premium Bio-Kosmetik & nachhaltige Produkte aus Deutschland. 
-            Natürlich schön seit 2018.
+  <footer id="contact" class="bg-gray-900 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <div class="md:col-span-2">
+          <h3 class="text-2xl font-serif font-bold gradient-text mb-4">🌿 ZENOVO</h3>
+          <p class="text-gray-300 mb-6 leading-relaxed">
+            Premium Bio-Kosmetik aus Deutschland. Natürliche Schönheit für bewusste Menschen, 
+            die Wert auf Qualität und Nachhaltigkeit legen.
           </p>
-          <div class="space-y-2 text-gray-600">
-            <p>📍 Musterstraße 123, 10115 Berlin</p>
-            <p>📞 +49 (0) 30 12345678</p>
-            <p>✉️ hello@zenovo.de</p>
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center hover:bg-green-700 transition-colors">
+              <span class="text-lg">f</span>
+            </a>
+            <a href="#" class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center hover:bg-green-700 transition-colors">
+              <span class="text-lg">@</span>
+            </a>
+            <a href="#" class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center hover:bg-green-700 transition-colors">
+              <span class="text-lg">in</span>
+            </a>
           </div>
         </div>
         <div>
-          <h4 class="font-bold mb-6 text-xl text-gray-800">Shop</h4>
-          <ul class="space-y-3">
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Alle Produkte</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Bio-Kosmetik</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Haushaltswaren</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Sportartikel</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Schmuck</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Versand & Lieferung</a></li>
+          <h4 class="text-lg font-semibold mb-4">Schnelle Links</h4>
+          <ul class="space-y-2">
+            <li><a href="#products" class="text-gray-300 hover:text-white transition-colors">Produkte</a></li>
+            <li><a href="#about" class="text-gray-300 hover:text-white transition-colors">Über uns</a></li>
+            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Blog</a></li>
+            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">FAQ</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="font-bold mb-6 text-xl text-gray-800">Service</h4>
-          <ul class="space-y-3">
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Kundenservice</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Häufige Fragen (FAQ)</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Rückgabe & Umtausch</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Größenberatung</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Pflegeanleitungen</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-bold mb-6 text-xl text-gray-800">Unternehmen</h4>
-          <ul class="space-y-3">
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Über uns</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Nachhaltigkeit</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Karriere</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Presse</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Partner werden</a></li>
-          </ul>
+          <h4 class="text-lg font-semibold mb-4">Kontakt</h4>
+          <div class="space-y-2 text-gray-300">
+            <p>📍 Musterstraße 123, 10115 Berlin</p>
+            <p>📞 +49 (0) 30 12345678</p>
+            <p>✉️ hello@zenovo.de</p>
+            <p>🕒 Mo-Fr: 9-18 Uhr</p>
+          </div>
         </div>
       </div>
       
-      <div class="border-t border-gray-300 pt-8 flex flex-col md:flex-row justify-between items-center">
-        <p class="text-gray-600 text-sm mb-4 md:mb-0">
-          © 2025 Zenovo GmbH, Deutschland. Alle Rechte vorbehalten.
+      <div class="border-t border-gray-700 pt-8 text-center">
+        <p class="text-gray-400">
+          © 2025 ZENOVO. Alle Rechte vorbehalten. | 
+          <a href="#" class="hover:text-white transition-colors">Datenschutz</a> | 
+          <a href="#" class="hover:text-white transition-colors">Impressum</a>
         </p>
-        <div class="flex space-x-6 text-sm">
-          <a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Impressum</a>
-          <a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Datenschutz</a>
-          <a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">AGB</a>
-          <a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Cookie-Einstellungen</a>
-        </div>
       </div>
     </div>
   </footer>
 
-  <!-- Back to Top Button -->
-  <button id="backToTop" class="fixed bottom-8 right-8 bg-green-600 text-white p-3 rounded-full shadow-2xl hover:bg-green-700 transition-all duration-300 hover:scale-110 opacity-0 invisible" onclick="scrollToTop()">
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-    </svg>
-  </button>
-
   <script>
-    // Back to Top Button functionality
-    window.addEventListener('scroll', function() {
-      const backToTopBtn = document.getElementById('backToTop');
-      if (window.pageYOffset > 300) {
-        backToTopBtn.style.opacity = '1';
-        backToTopBtn.style.visibility = 'visible';
+    // Shopping Cart System
+    let cart = [];
+    
+    function addToCart(id, name, price, image) {
+      const existingItem = cart.find(item => item.id === id);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
       } else {
-        backToTopBtn.style.opacity = '0';
-        backToTopBtn.style.visibility = 'invisible';
+        cart.push({
+          id: id,
+          name: name,
+          price: price,
+          image: image,
+          quantity: 1
+        });
       }
-    });
-
-    function scrollToTop() {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      
+      updateCartDisplay();
+      updateCartCount();
+      showNotification(`✅ ${name} wurde zum Warenkorb hinzugefügt!`);
     }
-
-    // Smooth scrolling for navigation links
+    
+    function removeFromCart(id) {
+      cart = cart.filter(item => item.id !== id);
+      updateCartDisplay();
+      updateCartCount();
+    }
+    
+    function updateQuantity(id, change) {
+      const item = cart.find(item => item.id === id);
+      if (item) {
+        item.quantity += change;
+        if (item.quantity <= 0) {
+          removeFromCart(id);
+        } else {
+          updateCartDisplay();
+          updateCartCount();
+        }
+      }
+    }
+    
+    function updateCartDisplay() {
+      const cartItems = document.getElementById('cartItems');
+      const cartTotal = document.getElementById('cartTotal');
+      const totalPrice = document.getElementById('totalPrice');
+      
+      if (cart.length === 0) {
+        cartItems.innerHTML = '<p class="text-gray-500 text-center py-8">Ihr Warenkorb ist leer</p>';
+        cartTotal.style.display = 'none';
+        return;
+      }
+      
+      cartItems.innerHTML = cart.map(item => `
+        <div class="flex items-center space-x-3 py-3 border-b border-gray-200">
+          <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg">
+          <div class="flex-1">
+            <h4 class="font-medium text-sm">${item.name}</h4>
+            <p class="text-green-600 font-bold">€${item.price.toFixed(2)}</p>
+            <div class="flex items-center space-x-2 mt-1">
+              <button onclick="updateQuantity('${item.id}', -1)" class="w-6 h-6 bg-gray-200 rounded-full text-sm hover:bg-gray-300 transition-colors">-</button>
+              <span class="text-sm">${item.quantity}</span>
+              <button onclick="updateQuantity('${item.id}', 1)" class="w-6 h-6 bg-gray-200 rounded-full text-sm hover:bg-gray-300 transition-colors">+</button>
+              <button onclick="removeFromCart('${item.id}')" class="ml-2 text-red-500 text-sm hover:text-red-700 transition-colors">🗑️</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      
+      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      totalPrice.textContent = `€${total.toFixed(2)}`;
+      cartTotal.style.display = 'block';
+    }
+    
+    function updateCartCount() {
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('cartCount').textContent = count;
+    }
+    
+    function openCart() {
+      document.getElementById('cartSidebar').classList.add('open');
+      document.getElementById('cartOverlay').classList.add('open');
+    }
+    
+    function closeCart() {
+      document.getElementById('cartSidebar').classList.remove('open');
+      document.getElementById('cartOverlay').classList.remove('open');
+    }
+    
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => notification.classList.add('show'), 100);
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+    
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('hidden');
+    }
+    
+    function subscribeNewsletter(event) {
+      event.preventDefault();
+      const email = event.target.querySelector('input[type="email"]').value;
+      showNotification('✅ Vielen Dank! Sie wurden für unseren Newsletter angemeldet.');
+      event.target.reset();
+    }
+    
+    // Smooth scrolling
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -610,6 +738,44 @@
           });
         }
       });
+    });
+    
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 100) {
+        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+      } else {
+        navbar.style.background = 'rgba(255, 255, 255, 0.25)';
+      }
+    });
+    
+    // Initialize animations on scroll
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fadeInUp');
+        }
+      });
+    }, observerOptions);
+    
+    // Auto-hide mobile menu
+    document.querySelectorAll('#mobileMenu a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('mobileMenu').classList.add('hidden');
+      });
+    });
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🌿 ZENOVO - Natürliche Schönheit geladen');
+      const elementsToAnimate = document.querySelectorAll('.product-card, .trust-badge');
+      elementsToAnimate.forEach(el => observer.observe(el));
     });
   </script>
 </body>
