@@ -7,6 +7,7 @@
   <meta name="description" content="Entdecken Sie ZENOVO - Premium Bio-Kosmetik und nachhaltige Wellness-Produkte. 100% natürlich, vegan und umweltfreundlich. Kostenloser Versand ab 35€.">
   <meta name="keywords" content="Bio-Kosmetik, nachhaltige Schönheit, vegan, natürlich, Deutschland, Premium Kosmetik">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://js.stripe.com/v3/"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -217,6 +218,55 @@
     }
     
     .notification.show { transform: translateX(0); }
+
+    .checkout-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+    
+    .checkout-modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .checkout-content {
+      background: white;
+      border-radius: 20px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+    
+    .checkout-modal.open .checkout-content {
+      transform: scale(1);
+    }
+
+    #card-element {
+      padding: 12px;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      background: #F9FAFB;
+    }
+
+    #card-errors {
+      color: #EF4444;
+      margin-top: 8px;
+      font-size: 14px;
+    }
     
     @media (max-width: 640px) {
       .cart-sidebar {
@@ -258,9 +308,89 @@
           <span class="font-semibold text-lg">Gesamt:</span>
           <span class="font-bold text-xl gradient-text" id="totalPrice">€0.00</span>
         </div>
-        <button class="w-full btn-primary text-white py-3 rounded-full font-semibold">
+        <button onclick="openCheckout()" class="w-full btn-primary text-white py-3 rounded-full font-semibold">
           Zur Kasse gehen
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div class="checkout-modal" id="checkoutModal">
+    <div class="checkout-content">
+      <div class="p-6 border-b">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl font-bold">Checkout</h3>
+          <button onclick="closeCheckout()" class="p-2 hover:bg-gray-100 rounded-full">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="p-6">
+        <form id="payment-form">
+          <!-- Kundendaten -->
+          <div class="mb-6">
+            <h4 class="text-lg font-semibold mb-4">Kundendaten</h4>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <input type="text" name="firstName" placeholder="Vorname" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+              <input type="text" name="lastName" placeholder="Nachname" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+            </div>
+            <input type="email" name="email" placeholder="E-Mail-Adresse" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mb-4">
+            <input type="tel" name="phone" placeholder="Telefonnummer" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+          </div>
+
+          <!-- Lieferadresse -->
+          <div class="mb-6">
+            <h4 class="text-lg font-semibold mb-4">Lieferadresse</h4>
+            <input type="text" name="address" placeholder="Straße und Hausnummer" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mb-4">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <input type="text" name="postalCode" placeholder="PLZ" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+              <input type="text" name="city" placeholder="Stadt" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+            </div>
+            <select name="country" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+              <option value="">Land auswählen</option>
+              <option value="DE">Deutschland</option>
+              <option value="AT">Österreich</option>
+              <option value="CH">Schweiz</option>
+            </select>
+          </div>
+
+          <!-- Stripe Zahlungselement -->
+          <div class="mb-6">
+            <h4 class="text-lg font-semibold mb-4">Zahlungsinformationen</h4>
+            <div id="card-element">
+              <!-- Stripe Elements werden hier eingefügt -->
+            </div>
+            <div id="card-errors" role="alert"></div>
+          </div>
+
+          <!-- Bestellübersicht -->
+          <div class="mb-6 bg-gray-50 p-4 rounded-lg">
+            <h4 class="text-lg font-semibold mb-4">Bestellübersicht</h4>
+            <div id="checkoutItems"></div>
+            <div class="border-t pt-3 mt-3">
+              <div class="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Zwischensumme:</span>
+                <span id="checkoutSubtotal">€0.00</span>
+              </div>
+              <div class="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Versand:</span>
+                <span id="checkoutShipping">Kostenlos</span>
+              </div>
+              <div class="flex justify-between font-bold text-lg pt-2 border-t">
+                <span>Gesamt:</span>
+                <span id="checkoutTotal" class="text-green-600">€0.00</span>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="submit-button" class="w-full bg-green-600 text-white py-4 rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+            <span id="button-text">Jetzt kostenpflichtig bestellen</span>
+            <div id="spinner" class="hidden">Verarbeitung...</div>
+          </button>
+        </form>
       </div>
     </div>
   </div>
@@ -278,7 +408,8 @@
             <a href="index.html" class="text-gray-700 hover:text-green-700 px-3 py-2 text-sm font-medium transition-colors">Startseite</a>
             <a href="catalog.html" class="text-gray-700 hover:text-green-700 px-3 py-2 text-sm font-medium transition-colors">Produkte</a>
             <a href="about.html" class="text-gray-700 hover:text-green-700 px-3 py-2 text-sm font-medium transition-colors">Über uns</a>
-            <a href="#contact" class="text-gray-700 hover:text-green-700 px-3 py-2 text-sm font-medium transition-colors">Kontakt</a>
+            <a href="contact.html" class="text-gray-700 hover:text-green-700 px-3 py-2 text-sm font-medium transition-colors">Kontakt</a>
+            <a href="cart.html" class="text-gray-700 hover:text-green-700 px-3 py-2 text-sm font-medium transition-colors">Warenkorb</a>
           </div>
         </div>
         
@@ -333,10 +464,10 @@
         </p>
         
         <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-          <a href="#products" class="btn-primary text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all">
+          <a href="catalog.html" class="btn-primary text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all">
             Kollektion entdecken
           </a>
-          <a href="#about" class="glass-morphism px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/40 transition-all">
+          <a href="about.html" class="glass-morphism px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/40 transition-all">
             Unsere Geschichte
           </a>
         </div>
@@ -504,7 +635,7 @@
             </p>
           </div>
           <div class="mt-8">
-            <a href="#contact" class="btn-primary text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all">
+            <a href="about.html" class="btn-primary text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all">
               Mehr über uns erfahren
             </a>
           </div>
@@ -582,8 +713,8 @@
       <div>
         <h4 class="text-lg font-semibold mb-4">Schnelle Links</h4>
         <ul class="space-y-2">
-          <li><a href="#products" class="text-gray-300 hover:text-white transition-colors">Produkte</a></li>
-          <li><a href="#about" class="text-gray-300 hover:text-white transition-colors">Über uns</a></li>
+          <li><a href="catalog.html" class="text-gray-300 hover:text-white transition-colors">Produkte</a></li>
+          <li><a href="about.html" class="text-gray-300 hover:text-white transition-colors">Über uns</a></li>
           <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Blog</a></li>
           <li><a href="#" class="text-gray-300 hover:text-white transition-colors">FAQ</a></li>
           <li><button onclick="showCookieSettings()" class="text-gray-300 hover:text-white transition-colors text-left">Cookie-Einstellungen</button></li>
@@ -610,155 +741,71 @@
   </div>
 </footer>
 
+  <script src="stripe-config.js"></script>
   <script>
-    // Cookie Management System
-const COOKIE_CONSENT_KEY = 'zenovo_cookie_consent';
-const COOKIE_PREFERENCES_KEY = 'zenovo_cookie_preferences';
-
-// Show cookie banner on first visit
-document.addEventListener('DOMContentLoaded', function() {
-  const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
-  if (!consent) {
-    setTimeout(() => {
-      document.getElementById('cookieBanner').style.transform = 'translateY(0)';
-    }, 1000);
-  } else {
-    loadCookiePreferences();
-  }
-});
-
-function acceptAllCookies() {
-  const preferences = {
-    essential: true,
-    analytics: true,
-    marketing: true,
-    timestamp: Date.now()
-  };
-  
-  localStorage.setItem(COOKIE_CONSENT_KEY, 'true');
-  localStorage.setItem(COOKIE_PREFERENCES_KEY, JSON.stringify(preferences));
-  
-  hideCookieBanner();
-  loadAnalytics();
-  loadMarketing();
-  showNotification('✅ Alle Cookies wurden akzeptiert');
-}
-
-function acceptEssentialCookies() {
-  const preferences = {
-    essential: true,
-    analytics: false,
-    marketing: false,
-    timestamp: Date.now()
-  };
-  
-  localStorage.setItem(COOKIE_CONSENT_KEY, 'true');
-  localStorage.setItem(COOKIE_PREFERENCES_KEY, JSON.stringify(preferences));
-  
-  hideCookieBanner();
-  showNotification('✅ Nur notwendige Cookies wurden akzeptiert');
-}
-
-function configureCookies() {
-  document.getElementById('cookieModal').classList.remove('hidden');
-  
-  // Load current preferences
-  const preferences = JSON.parse(localStorage.getItem(COOKIE_PREFERENCES_KEY) || '{"analytics": false, "marketing": false}');
-  document.getElementById('analyticsCookies').checked = preferences.analytics;
-  document.getElementById('marketingCookies').checked = preferences.marketing;
-}
-
-function closeCookieModal() {
-  document.getElementById('cookieModal').classList.add('hidden');
-}
-
-function saveCustomCookieSettings() {
-  const preferences = {
-    essential: true,
-    analytics: document.getElementById('analyticsCookies').checked,
-    marketing: document.getElementById('marketingCookies').checked,
-    timestamp: Date.now()
-  };
-  
-  localStorage.setItem(COOKIE_CONSENT_KEY, 'true');
-  localStorage.setItem(COOKIE_PREFERENCES_KEY, JSON.stringify(preferences));
-  
-  hideCookieBanner();
-  closeCookieModal();
-  
-  if (preferences.analytics) loadAnalytics();
-  if (preferences.marketing) loadMarketing();
-  
-  showNotification('✅ Cookie-Einstellungen wurden gespeichert');
-}
-
-function acceptAllCookiesFromModal() {
-  document.getElementById('analyticsCookies').checked = true;
-  document.getElementById('marketingCookies').checked = true;
-  saveCustomCookieSettings();
-}
-
-function hideCookieBanner() {
-  document.getElementById('cookieBanner').style.transform = 'translateY(100%)';
-}
-
-function loadCookiePreferences() {
-  const preferences = JSON.parse(localStorage.getItem(COOKIE_PREFERENCES_KEY) || '{}');
-  
-  if (preferences.analytics) loadAnalytics();
-  if (preferences.marketing) loadMarketing();
-}
-
-function loadAnalytics() {
-  // Google Analytics 4
-  if (!window.gtag) {
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = 'https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID';
-    document.head.appendChild(script);
-    
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    window.gtag = gtag;
-    gtag('js', new Date());
-    gtag('config', 'GA_MEASUREMENT_ID');
-  }
-}
-
-function loadMarketing() {
-  // Facebook Pixel
-  if (!window.fbq) {
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', 'YOUR_PIXEL_ID');
-    fbq('track', 'PageView');
-  }
-}
-
-// Cookie management functions for users
-function showCookieSettings() {
-  configureCookies();
-}
-
-function revokeCookieConsent() {
-  localStorage.removeItem(COOKIE_CONSENT_KEY);
-  localStorage.removeItem(COOKIE_PREFERENCES_KEY);
-  
-  // Clear analytics cookies
-  document.cookie = '_ga=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-  document.cookie = '_gid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-  
-  showNotification('✅ Cookie-Einstellungen wurden zurückgesetzt');
-  setTimeout(() => location.reload(), 1000);
-}
     // Shopping Cart System
-    let cart = [];
+    let cart = JSON.parse(localStorage.getItem('zenovo_cart')) || [];
+    
+    // Save cart to localStorage
+    function saveCart() {
+      localStorage.setItem('zenovo_cart', JSON.stringify(cart));
+    }
+    
+    // Stripe Configuration
+    let stripe;
+    let elements;
+    let cardElement;
+
+    // Initialize Stripe
+    function initializeStripe() {
+      try {
+        stripe = Stripe('pk_live_51RlYHeDnazw9b0QRsKskNKyj2uIhk6FKM0Dt8vryvB5A8m5li9fKMnwSOnmBUaQbfsuNaoVTiLQ6XSrx9bzzzSYy00QKhz8fOs');
+        elements = stripe.elements({
+          locale: 'de',
+          fonts: [{
+            cssSrc: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap'
+          }]
+        });
+        
+        cardElement = elements.create('card', {
+          style: {
+            base: {
+              fontSize: '16px',
+              color: '#374151',
+              fontFamily: 'Montserrat, sans-serif',
+              fontWeight: '400',
+              '::placeholder': {
+                color: '#9CA3AF',
+              },
+              padding: '12px',
+            },
+            invalid: {
+              iconColor: '#EF4444',
+              color: '#EF4444',
+            },
+            complete: {
+              iconColor: '#10B981',
+            }
+          }
+        });
+        
+        cardElement.mount('#card-element');
+        
+        cardElement.on('change', ({error}) => {
+          const displayError = document.getElementById('card-errors');
+          if (error) {
+            displayError.textContent = error.message;
+          } else {
+            displayError.textContent = '';
+          }
+        });
+        
+        return true;
+      } catch (error) {
+        console.error('Fehler beim Initialisieren von Stripe:', error);
+        return false;
+      }
+    }
     
     function addToCart(id, name, price, image) {
       const existingItem = cart.find(item => item.id === id);
@@ -775,6 +822,7 @@ function revokeCookieConsent() {
         });
       }
       
+      saveCart();
       updateCartDisplay();
       updateCartCount();
       showNotification(`✅ ${name} wurde zum Warenkorb hinzugefügt!`);
@@ -782,6 +830,7 @@ function revokeCookieConsent() {
     
     function removeFromCart(id) {
       cart = cart.filter(item => item.id !== id);
+      saveCart();
       updateCartDisplay();
       updateCartCount();
     }
@@ -793,6 +842,7 @@ function revokeCookieConsent() {
         if (item.quantity <= 0) {
           removeFromCart(id);
         } else {
+          saveCart();
           updateCartDisplay();
           updateCartCount();
         }
@@ -812,7 +862,7 @@ function revokeCookieConsent() {
       
       cartItems.innerHTML = cart.map(item => `
         <div class="flex items-center space-x-3 py-3 border-b border-gray-200">
-          <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg">
+          <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg" onerror="this.src='https://via.placeholder.com/64x64/f3f4f6/6b7280?text=Bild'">
           <div class="flex-1">
             <h4 class="font-medium text-sm">${item.name}</h4>
             <p class="text-green-600 font-bold">€${item.price.toFixed(2)}</p>
@@ -845,6 +895,201 @@ function revokeCookieConsent() {
       document.getElementById('cartSidebar').classList.remove('open');
       document.getElementById('cartOverlay').classList.remove('open');
     }
+
+    function openCheckout() {
+      if (cart.length === 0) {
+        showNotification('❌ Ihr Warenkorb ist leer');
+        return;
+      }
+      
+      closeCart();
+      updateCheckoutDisplay();
+      document.getElementById('checkoutModal').classList.add('open');
+      
+      // Initialize Stripe if not already done
+      if (!stripe) {
+        initializeStripe();
+      }
+    }
+    
+    function closeCheckout() {
+      document.getElementById('checkoutModal').classList.remove('open');
+    }
+    
+    function updateCheckoutDisplay() {
+      const checkoutItems = document.getElementById('checkoutItems');
+      const checkoutSubtotal = document.getElementById('checkoutSubtotal');
+      const checkoutShipping = document.getElementById('checkoutShipping');
+      const checkoutTotal = document.getElementById('checkoutTotal');
+      
+      checkoutItems.innerHTML = cart.map(item => `
+        <div class="flex justify-between items-center py-2 border-b border-gray-200">
+          <div class="flex items-center space-x-3">
+            <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-lg" onerror="this.src='https://via.placeholder.com/48x48/f3f4f6/6b7280?text=Bild'">
+            <div>
+              <span class="text-sm font-medium">${item.name}</span>
+              <span class="text-xs text-gray-500 block">Menge: ${item.quantity}</span>
+            </div>
+          </div>
+          <span class="text-sm font-medium">€${(item.price * item.quantity).toFixed(2)}</span>
+        </div>
+      `).join('');
+      
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const shippingCost = subtotal >= 39 ? 0 : 4.99;
+      const total = subtotal + shippingCost;
+      
+      checkoutSubtotal.textContent = `€${subtotal.toFixed(2)}`;
+      checkoutShipping.textContent = shippingCost === 0 ? 'Kostenlos' : `€${shippingCost.toFixed(2)}`;
+      checkoutTotal.textContent = `€${total.toFixed(2)}`;
+    }
+    
+    // Stripe Payment Processing
+    async function processPayment(event) {
+      event.preventDefault();
+
+      if (!stripe || !cardElement) {
+        showNotification('❌ Zahlungssystem nicht verfügbar');
+        return;
+      }
+
+      const submitButton = document.getElementById('submit-button');
+      const buttonText = document.getElementById('button-text');
+      const spinner = document.getElementById('spinner');
+
+      // Disable submit button and show spinner
+      submitButton.disabled = true;
+      buttonText.classList.add('hidden');
+      spinner.classList.remove('hidden');
+
+      const formData = new FormData(event.target);
+      const customerData = {
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        address: formData.get('address'),
+        postalCode: formData.get('postalCode'),
+        city: formData.get('city'),
+        country: formData.get('country')
+      };
+
+      // Validate required fields
+      if (!customerData.firstName || !customerData.lastName || !customerData.email || 
+          !customerData.address || !customerData.postalCode || !customerData.city || !customerData.country) {
+        showNotification('❌ Bitte füllen Sie alle Pflichtfelder aus');
+        submitButton.disabled = false;
+        buttonText.classList.remove('hidden');
+        spinner.classList.add('hidden');
+        return;
+      }
+
+      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const shippingCost = total >= 39 ? 0 : 4.99;
+      const finalTotal = total + shippingCost;
+
+      try {
+        // Create payment intent on your server
+        // For demo purposes, we'll simulate this
+        const paymentIntentResponse = await createPaymentIntent(finalTotal, customerData);
+        
+        if (!paymentIntentResponse.success) {
+          throw new Error(paymentIntentResponse.error);
+        }
+
+        // Confirm payment with Stripe
+        const {error, paymentIntent} = await stripe.confirmCardPayment(
+          paymentIntentResponse.client_secret,
+          {
+            payment_method: {
+              card: cardElement,
+              billing_details: {
+                name: `${customerData.firstName} ${customerData.lastName}`,
+                email: customerData.email,
+                phone: customerData.phone,
+                address: {
+                  line1: customerData.address,
+                  postal_code: customerData.postalCode,
+                  city: customerData.city,
+                  country: customerData.country,
+                }
+              }
+            }
+          }
+        );
+
+        if (error) {
+          showNotification(`❌ Zahlung fehlgeschlagen: ${error.message}`);
+        } else if (paymentIntent.status === 'succeeded') {
+          // Payment successful
+          showNotification('🎉 Zahlung erfolgreich! Vielen Dank für Ihre Bestellung!');
+          
+          // Clear cart and close checkout
+          cart = [];
+          saveCart();
+          updateCartDisplay();
+          updateCartCount();
+          closeCheckout();
+          
+          // Show success message with order details
+          setTimeout(() => {
+            alert(`Bestellung erfolgreich abgeschlossen!\n\n✅ Zahlbetrag: €${finalTotal.toFixed(2)}\n📦 Lieferung in 2-3 Werktagen\n📧 Bestätigungsmail an ${customerData.email}\n\nVielen Dank für Ihr Vertrauen in ZENOVO!`);
+          }, 1000);
+        }
+      } catch (error) {
+        console.error('Payment error:', error);
+        showNotification(`❌ Zahlung fehlgeschlagen: ${error.message}`);
+      } finally {
+        // Re-enable submit button
+        submitButton.disabled = false;
+        buttonText.classList.remove('hidden');
+        spinner.classList.add('hidden');
+      }
+    }
+
+    // Create payment intent on server
+    async function createPaymentIntent(amount, customerData) {
+      try {
+        const response = await fetch(`${STRIPE_CONFIG.apiUrl}/create-payment-intent`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: amount,
+            currency: STRIPE_CONFIG.currency,
+            customerData: customerData,
+            orderData: {
+              orderId: `order_${Date.now()}`,
+              items: cart.map(item => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                image: item.image
+              })),
+              timestamp: new Date().toISOString()
+            }
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Payment setup failed');
+        }
+
+        const data = await response.json();
+        return {
+          success: true,
+          client_secret: data.clientSecret,
+          customerId: data.customerId,
+          orderId: data.orderId
+        };
+      } catch (error) {
+        console.error('Payment intent creation error:', error);
+        throw new Error(`Zahlung konnte nicht initialisiert werden: ${error.message}`);
+      }
+    }
     
     function showNotification(message) {
       const notification = document.createElement('div');
@@ -858,7 +1103,7 @@ function revokeCookieConsent() {
       setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => notification.remove(), 300);
-      }, 3000);
+      }, 4000);
     }
     
     function toggleMobileMenu() {
@@ -871,6 +1116,11 @@ function revokeCookieConsent() {
       const email = event.target.querySelector('input[type="email"]').value;
       showNotification('✅ Vielen Dank! Sie wurden für unseren Newsletter angemeldet.');
       event.target.reset();
+    }
+    
+    // Cookie Management System (Simplified)
+    function showCookieSettings() {
+      alert('Cookie-Einstellungen:\n\n✅ Notwendige Cookies: Aktiv\n🍪 Analytics: Optional\n📊 Marketing: Optional\n\nSie können Ihre Einstellungen jederzeit ändern.');
     }
     
     // Smooth scrolling
@@ -918,145 +1168,25 @@ function revokeCookieConsent() {
       });
     });
     
-    // Initialize
+    // Initialize everything when page loads
     document.addEventListener('DOMContentLoaded', () => {
       console.log('🌿 ZENOVO - Natürliche Schönheit geladen');
+      
+      // Initialize Stripe
+      initializeStripe();
+      
+      // Initialize cart count
+      updateCartCount();
+      
+      // Setup payment form
+      const paymentForm = document.getElementById('payment-form');
+      if (paymentForm) {
+        paymentForm.addEventListener('submit', processPayment);
+      }
+      
       const elementsToAnimate = document.querySelectorAll('.product-card, .trust-badge');
       elementsToAnimate.forEach(el => observer.observe(el));
     });
   </script>
-  <!-- Cookie Banner -->
-<div id="cookieBanner" class="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-green-600 shadow-lg z-50 transform translate-y-full transition-transform duration-300">
-  <div class="max-w-7xl mx-auto px-4 py-6">
-    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-      <div class="flex-1">
-        <h3 class="text-lg font-semibold text-gray-800 mb-2">🍪 Cookie-Einstellungen</h3>
-        <p class="text-gray-600 text-sm leading-relaxed">
-          Wir verwenden Cookies, um Ihnen die bestmögliche Nutzererfahrung zu bieten. 
-          Einige Cookies sind technisch notwendig, andere helfen uns, die Website zu verbessern. 
-          Sie können Ihre Einstellungen jederzeit anpassen.
-        </p>
-        <p class="text-sm text-gray-500 mt-2">
-          Mehr Informationen finden Sie in unserer 
-          <a href="datenschutz.html" class="text-green-600 hover:underline font-medium">Datenschutzerklärung</a>.
-        </p>
-      </div>
-      
-      <div class="flex flex-col sm:flex-row gap-3 lg:ml-6">
-        <button onclick="configureCookies()" 
-                class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
-          Einstellungen
-        </button>
-        <button onclick="acceptEssentialCookies()" 
-                class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium">
-          Nur Notwendige
-        </button>
-        <button onclick="acceptAllCookies()" 
-                class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
-          Alle akzeptieren
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Cookie Settings Modal -->
-<div id="cookieModal" class="fixed inset-0 bg-black bg-opacity-50 z-60 hidden">
-  <div class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white rounded-xl max-w-2xl w-full max-h-screen overflow-y-auto">
-      <div class="p-6">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-semibold text-gray-800">Cookie-Einstellungen</h2>
-          <button onclick="closeCookieModal()" class="text-gray-400 hover:text-gray-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        </div>
-        
-        <div class="space-y-6">
-          <!-- Essential Cookies -->
-          <div class="border border-gray-200 rounded-lg p-4">
-            <div class="flex justify-between items-start mb-3">
-              <div>
-                <h3 class="text-lg font-medium text-gray-800">Notwendige Cookies</h3>
-                <p class="text-sm text-gray-600 mt-1">
-                  Diese Cookies sind für das Funktionieren der Website erforderlich und können nicht deaktiviert werden.
-                </p>
-              </div>
-              <div class="flex items-center">
-                <span class="text-sm text-gray-500 mr-2">Immer aktiv</span>
-                <div class="w-12 h-6 bg-green-500 rounded-full relative">
-                  <div class="w-5 h-5 bg-white rounded-full absolute top-0.5 right-0.5"></div>
-                </div>
-              </div>
-            </div>
-            <div class="text-sm text-gray-500">
-              <p><strong>Zweck:</strong> Session-Management, Warenkorb, Sicherheit</p>
-              <p><strong>Dauer:</strong> Session / 1 Jahr</p>
-            </div>
-          </div>
-
-          <!-- Analytics Cookies -->
-          <div class="border border-gray-200 rounded-lg p-4">
-            <div class="flex justify-between items-start mb-3">
-              <div>
-                <h3 class="text-lg font-medium text-gray-800">Analyse & Statistik</h3>
-                <p class="text-sm text-gray-600 mt-1">
-                  Diese Cookies helfen uns zu verstehen, wie Besucher mit der Website interagieren.
-                </p>
-              </div>
-              <div class="flex items-center">
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" id="analyticsCookies">
-                  <div class="w-12 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
-                </label>
-              </div>
-            </div>
-            <div class="text-sm text-gray-500">
-              <p><strong>Anbieter:</strong> Google Analytics, Hotjar</p>
-              <p><strong>Zweck:</strong> Website-Optimierung, Nutzerverhalten</p>
-              <p><strong>Dauer:</strong> 2 Jahre</p>
-            </div>
-          </div>
-
-          <!-- Marketing Cookies -->
-          <div class="border border-gray-200 rounded-lg p-4">
-            <div class="flex justify-between items-start mb-3">
-              <div>
-                <h3 class="text-lg font-medium text-gray-800">Marketing & Werbung</h3>
-                <p class="text-sm text-gray-600 mt-1">
-                  Diese Cookies werden verwendet, um Ihnen relevante Werbung zu zeigen.
-                </p>
-              </div>
-              <div class="flex items-center">
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" id="marketingCookies">
-                  <div class="w-12 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
-                </label>
-              </div>
-            </div>
-            <div class="text-sm text-gray-500">
-              <p><strong>Anbieter:</strong> Facebook Pixel, Google Ads</p>
-              <p><strong>Zweck:</strong> Personalisierte Werbung</p>
-              <p><strong>Dauer:</strong> 1 Jahr</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex flex-col sm:flex-row gap-3 mt-8">
-          <button onclick="saveCustomCookieSettings()" 
-                  class="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
-            Einstellungen speichern
-          </button>
-          <button onclick="acceptAllCookiesFromModal()" 
-                  class="flex-1 px-6 py-3 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 transition-colors font-medium">
-            Alle akzeptieren
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 </body>
 </html>

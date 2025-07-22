@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warenkorb - ZENOVO | Premium Bio-Kosmetik aus Deutschland</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, .font-display { font-family: 'Playfair Display', serif; }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200px 0; }
+      100% { background-position: calc(200px + 100%) 0; }
+    }
+    
+    .animate-fadeInUp { animation: fadeInUp 0.8s ease-out; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    .shimmer {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+      background-size: 200px 100%;
+      animation: shimmer 2s infinite;
+    }
+    
+    .glass-effect {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #16a34a, #22c55e, #4ade80);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cart-item {
+      transition: all 0.3s ease;
+    }
+    
+    .cart-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    /* Checkout Modal */
+    .checkout-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1002;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      overflow-y: auto;
+    }
+    
+    .checkout-modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .checkout-content {
+      background: white;
+      max-width: 800px;
+      margin: 50px auto;
+      border-radius: 12px;
+      transform: translateY(-30px);
+      transition: transform 0.3s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .checkout-modal.open .checkout-content {
+      transform: translateY(0);
+    }
+
+    #card-element {
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: white;
+    }
+
+    #card-errors {
+      color: #ef4444;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #10b981;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      z-index: 1003;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    @media (max-width: 640px) {
+      .checkout-content {
+        margin: 20px;
+        max-height: 95vh;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-[#f9f7f3] via-[#faf8f5] to-[#f1efe8] text-gray-800">
+
+  <!-- Checkout Modal -->
+  <div class="checkout-modal" id="checkoutModal">
+    <div class="checkout-content">
+      <div class="p-6 border-b">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl font-bold">Checkout</h3>
+          <button onclick="closeCheckout()" class="p-2 hover:bg-gray-100 rounded-full">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="p-6">
+        <form id="checkoutForm">
+          <!-- Kundendaten -->
+          <div class="mb-6">
+            <h4 class="text-lg font-semibold mb-4">Kundendaten</h4>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <input type="text" name="firstName" placeholder="Vorname" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+              <input type="text" name="lastName" placeholder="Nachname" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+            </div>
+            <input type="email" name="email" placeholder="E-Mail-Adresse" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mb-4">
+            <input type="tel" name="phone" placeholder="Telefonnummer" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+          </div>
+
+          <!-- Lieferadresse -->
+          <div class="mb-6">
+            <h4 class="text-lg font-semibold mb-4">Lieferadresse</h4>
+            <input type="text" name="address" placeholder="Straße und Hausnummer" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mb-4">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <input type="text" name="postalCode" placeholder="PLZ" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+              <input type="text" name="city" placeholder="Stadt" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+            </div>
+            <select name="country" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+              <option value="">Land auswählen</option>
+              <option value="DE">Deutschland</option>
+              <option value="AT">Österreich</option>
+              <option value="CH">Schweiz</option>
+            </select>
+          </div>
+
+          <!-- Zahlungsmethode -->
+          <div class="mb-6">
+            <h4 class="text-lg font-semibold mb-4">Zahlungsmethode</h4>
+            <div class="space-y-3">
+              <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <input type="radio" name="payment" value="paypal" class="mr-3">
+                <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal" class="h-6 mr-3">
+                <span>PayPal</span>
+              </label>
+              <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <input type="radio" name="payment" value="card" class="mr-3">
+                <div class="flex space-x-2 mr-3">
+                  <img src="https://img.icons8.com/color/30/visa.png" alt="Visa">
+                  <img src="https://img.icons8.com/color/30/mastercard.png" alt="MasterCard">
+                  <img src="https://img.icons8.com/color/30/amex.png" alt="AmEx">
+                </div>
+                <span>Kreditkarte</span>
+              </label>
+              <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <input type="radio" name="payment" value="klarna" class="mr-3">
+                <span class="text-pink-600 font-bold mr-3">Klarna</span>
+                <span>Rechnung/Ratenzahlung</span>
+              </label>
+              <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <input type="radio" name="payment" value="giropay" class="mr-3">
+                <span class="text-blue-600 font-bold mr-3">giropay</span>
+                <span>Sofortüberweisung</span>
+              </label>
+              <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <input type="radio" name="payment" value="applepay" class="mr-3">
+                <span class="mr-3">🍎</span>
+                <span>Apple Pay</span>
+              </label>
+              <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <input type="radio" name="payment" value="googlepay" class="mr-3">
+                <span class="text-blue-600 font-bold mr-3">G</span>
+                <span>Google Pay</span>
+              </label>
+            </div>
+            
+            <!-- Stripe Card Element Container (hidden by default) -->
+            <div id="card-element-container" style="display: none;" class="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-50">
+              <h5 class="text-md font-medium mb-3">Kreditkartendaten</h5>
+              <div id="card-element" class="p-3 border border-gray-300 rounded-lg bg-white">
+                <!-- Stripe card element will be mounted here -->
+              </div>
+              <div id="card-errors" role="alert" class="text-red-600 text-sm mt-2"></div>
+            </div>
+          </div>
+
+          <!-- Bestellübersicht -->
+          <div class="mb-6 bg-gray-50 p-4 rounded-lg">
+            <h4 class="text-lg font-semibold mb-4">Bestellübersicht</h4>
+            <div id="checkoutItems"></div>
+            <div class="border-t pt-3 mt-3">
+              <div class="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Zwischensumme:</span>
+                <span id="checkoutSubtotal">€0.00</span>
+              </div>
+              <div class="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Versand:</span>
+                <span id="checkoutShipping">Kostenlos</span>
+              </div>
+              <div class="flex justify-between font-bold text-lg pt-2 border-t">
+                <span>Gesamt:</span>
+                <span id="checkoutTotal" class="text-green-600">€0.00</span>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-green-600 text-white py-4 rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg">
+            Jetzt kostenpflichtig bestellen
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="glass-effect sticky top-0 z-50 p-4 shadow-lg">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <a href="index.html" class="text-3xl font-display font-bold gradient-text animate-float">🌿 ZENOVO</a>
+      <nav class="space-x-8 hidden md:block">
+        <a href="index.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+          Startseite
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+        </a>
+        <a href="catalog.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+          Produkte
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+        </a>
+        <a href="about.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+          Über uns
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+        </a>
+        <a href="contact.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+          Kontakt
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+        </a>
+      </nav>
+      <div class="flex space-x-4">
+        <button aria-label="Konto öffnen" class="p-2 rounded-full hover:bg-green-100 transition-all duration-300 hover:scale-110">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        </button>
+        <a href="catalog.html" aria-label="Weiter einkaufen" class="p-2 rounded-full hover:bg-green-100 transition-all duration-300 hover:scale-110">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6 8h13.2M7 13L5.4 5M17 13l1.6 8M6 21h12" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="py-16 bg-gradient-to-br from-[#fff8f0] via-[#f1efe8] to-[#e8f5e8] relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent shimmer"></div>
+    <div class="max-w-6xl mx-auto px-4 relative z-10 text-center">
+      <h1 class="text-4xl md:text-5xl font-display mb-6 gradient-text font-bold animate-fadeInUp">
+        Ihr Warenkorb
+      </h1>
+      <p class="text-xl text-gray-700 mb-8 animate-fadeInUp">
+        Überprüfen Sie Ihre ausgewählten Produkte und schließen Sie Ihre Bestellung ab
+      </p>
+    </div>
+  </section>
+
+  <!-- Cart Content -->
+  <section class="py-20 max-w-6xl mx-auto px-4">
+    <div id="emptyCart" class="text-center py-20" style="display: none;">
+      <div class="text-6xl mb-6">🛒</div>
+      <h2 class="text-3xl font-display font-bold text-gray-800 mb-4">Ihr Warenkorb ist leer</h2>
+      <p class="text-xl text-gray-600 mb-8">Entdecken Sie unsere hochwertigen Bio-Produkte</p>
+      <a href="catalog.html" class="bg-green-600 text-white px-8 py-4 rounded-full hover:bg-green-700 transition-colors font-semibold text-lg">
+        Zum Shop
+      </a>
+    </div>
+
+    <div id="cartContent" class="grid lg:grid-cols-3 gap-8">
+      <!-- Cart Items -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h2 class="text-2xl font-display font-bold mb-6">Ihre Produkte</h2>
+          <div id="cartItemsList" class="space-y-4">
+            <!-- Cart items will be inserted here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
+          <h3 class="text-xl font-display font-bold mb-6">Bestellübersicht</h3>
+          
+          <div class="space-y-3 mb-6">
+            <div class="flex justify-between text-gray-600">
+              <span>Zwischensumme:</span>
+              <span id="subtotalDisplay">€0.00</span>
+            </div>
+            <div class="flex justify-between text-gray-600">
+              <span>Versand:</span>
+              <span id="shippingDisplay">Kostenlos</span>
+            </div>
+            <div class="border-t pt-3">
+              <div class="flex justify-between text-xl font-bold">
+                <span>Gesamt:</span>
+                <span id="totalDisplay" class="text-green-600">€0.00</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <button onclick="openCheckout()" class="w-full bg-green-600 text-white py-4 rounded-full hover:bg-green-700 transition-colors font-semibold text-lg">
+              Zur Kasse
+            </button>
+            <a href="catalog.html" class="w-full block text-center border border-gray-300 py-3 rounded-full hover:bg-gray-50 transition-colors font-medium">
+              Weiter einkaufen
+            </a>
+          </div>
+
+          <!-- Trust Badges -->
+          <div class="mt-8 pt-6 border-t space-y-3">
+            <div class="flex items-center space-x-3 text-sm text-gray-600">
+              <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+              </svg>
+              <span>SSL-verschlüsselt</span>
+            </div>
+            <div class="flex items-center space-x-3 text-sm text-gray-600">
+              <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <span>14 Tage Rückgaberecht</span>
+            </div>
+            <div class="flex items-center space-x-3 text-sm text-gray-600">
+              <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+              </svg>
+              <span>Kostenloser Versand ab 39€</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-br from-[#f1efe8] via-[#e8f5e8] to-[#f1efe8] py-20 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-30"></div>
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+      <div class="grid md:grid-cols-4 gap-12 text-sm mb-12">
+        <div>
+          <h3 class="font-display text-2xl md:text-3xl mb-6 gradient-text font-bold">🌿 ZENOVO</h3>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            Premium Bio-Kosmetik & nachhaltige Produkte aus Deutschland. 
+            Natürlich schön seit 2018.
+          </p>
+          <div class="space-y-2 text-gray-600 text-sm">
+            <p>📍 Musterstraße 123, 10115 Berlin</p>
+            <p>📞 +49 (0) 30 12345678</p>
+            <p>✉️ hello@zenovo.de</p>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-bold mb-6 text-lg md:text-xl text-gray-800">Shop</h4>
+          <ul class="space-y-3">
+            <li><a href="catalog.html" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Alle Produkte</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Bio-Kosmetik</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Haushaltswaren</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Sportartikel</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Schmuck</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-6 text-lg md:text-xl text-gray-800">Service</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Kundenservice</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">FAQ</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Rückgabe</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Versand</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-6 text-lg md:text-xl text-gray-800">Unternehmen</h4>
+          <ul class="space-y-3">
+            <li><a href="about.html" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Über uns</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Nachhaltigkeit</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Karriere</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Presse</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-300 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-600 text-sm mb-4 md:mb-0">
+          © 2025 Zenovo GmbH, Deutschland. Alle Rechte vorbehalten.
+        </p>
+        <div class="flex space-x-6 text-sm">
+          <a href="impressum.html" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Impressum</a>
+          <a href="datenschutz.html" class="text-gray-600 hover:text-green-600 transition-colors duration-300">Datenschutz</a>
+          <a href="#" class="text-gray-600 hover:text-green-600 transition-colors duration-300">AGB</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Shopping Cart System
+    let cart = JSON.parse(localStorage.getItem('zenovo_cart')) || [];
+    
+    // Stripe Integration
+    let stripe;
+    let elements;
+    let cardElement;
+
+    function initializeStripe() {
+      if (typeof Stripe !== 'undefined' && typeof STRIPE_CONFIG !== 'undefined') {
+        stripe = Stripe(STRIPE_CONFIG.publishableKey);
+        elements = stripe.elements({
+          locale: 'de',
+          fonts: [
+            {
+              cssSrc: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
+            }
+          ]
+        });
+        
+        cardElement = elements.create('card', {
+          style: stripeElementStyle || {
+            base: {
+              fontSize: '16px',
+              color: '#374151',
+              fontFamily: 'Inter, sans-serif',
+              '::placeholder': {
+                color: '#9CA3AF',
+              }
+            }
+          },
+          hidePostalCode: true
+        });
+      }
+    }
+    
+    function saveCart() {
+      localStorage.setItem('zenovo_cart', JSON.stringify(cart));
+    }
+    
+    function removeFromCart(id) {
+      cart = cart.filter(item => item.id !== id);
+      saveCart();
+      displayCart();
+      showNotification('Produkt wurde entfernt');
+    }
+    
+    function updateQuantity(id, change) {
+      const item = cart.find(item => item.id === id);
+      if (item) {
+        item.quantity += change;
+        if (item.quantity <= 0) {
+          removeFromCart(id);
+        } else {
+          saveCart();
+          displayCart();
+        }
+      }
+    }
+    
+    function displayCart() {
+      const cartContent = document.getElementById('cartContent');
+      const emptyCart = document.getElementById('emptyCart');
+      const cartItemsList = document.getElementById('cartItemsList');
+      
+      if (cart.length === 0) {
+        cartContent.style.display = 'none';
+        emptyCart.style.display = 'block';
+        return;
+      }
+      
+      cartContent.style.display = 'grid';
+      emptyCart.style.display = 'none';
+      
+      // Display cart items
+      cartItemsList.innerHTML = cart.map(item => `
+        <div class="cart-item bg-gray-50 rounded-xl p-4 flex items-center space-x-4">
+          <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-lg" onerror="this.src='https://via.placeholder.com/80x80/f3f4f6/6b7280?text=Bild'">
+          <div class="flex-1">
+            <h3 class="font-semibold text-lg text-gray-800">${item.name}</h3>
+            <p class="text-green-600 font-bold text-xl">€${item.price.toFixed(2)}</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <button onclick="updateQuantity('${item.id}', -1)" class="w-8 h-8 bg-gray-200 rounded-full hover:bg-gray-300 transition-colors flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+              </svg>
+            </button>
+            <span class="text-lg font-semibold w-8 text-center">${item.quantity}</span>
+            <button onclick="updateQuantity('${item.id}', 1)" class="w-8 h-8 bg-gray-200 rounded-full hover:bg-gray-300 transition-colors flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+            </button>
+          </div>
+          <button onclick="removeFromCart('${item.id}')" class="ml-4 text-red-500 hover:text-red-700 transition-colors p-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </button>
+        </div>
+      `).join('');
+      
+      // Update totals
+      updateTotals();
+    }
+    
+    function updateTotals() {
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const shipping = subtotal >= 39 ? 0 : 4.99;
+      const total = subtotal + shipping;
+      
+      document.getElementById('subtotalDisplay').textContent = `€${subtotal.toFixed(2)}`;
+      document.getElementById('shippingDisplay').textContent = shipping === 0 ? 'Kostenlos' : `€${shipping.toFixed(2)}`;
+      document.getElementById('totalDisplay').textContent = `€${total.toFixed(2)}`;
+    }
+    
+    function openCheckout() {
+      if (cart.length === 0) {
+        showNotification('❌ Ihr Warenkorb ist leer!');
+        return;
+      }
+      
+      document.getElementById('checkoutModal').classList.add('open');
+      updateCheckoutDisplay();
+      
+      setTimeout(() => {
+        setupPaymentMethodListeners();
+      }, 100);
+    }
+    
+    function closeCheckout() {
+      document.getElementById('checkoutModal').classList.remove('open');
+      
+      if (cardElement) {
+        try {
+          cardElement.unmount();
+        } catch(e) {
+          // Element already unmounted
+        }
+      }
+    }
+    
+    function setupPaymentMethodListeners() {
+      const paymentInputs = document.querySelectorAll('input[name="payment"]');
+      const cardElementContainer = document.getElementById('card-element-container');
+      
+      paymentInputs.forEach(input => {
+        input.addEventListener('change', function() {
+          if (this.value === 'card') {
+            cardElementContainer.style.display = 'block';
+            if (cardElement && !document.getElementById('card-element').hasChildNodes()) {
+              cardElement.mount('#card-element');
+            }
+          } else {
+            cardElementContainer.style.display = 'none';
+            if (cardElement) {
+              try {
+                cardElement.unmount();
+              } catch(e) {
+                // Element already unmounted
+              }
+            }
+          }
+        });
+      });
+    }
+    
+    function updateCheckoutDisplay() {
+      const checkoutItems = document.getElementById('checkoutItems');
+      const checkoutSubtotal = document.getElementById('checkoutSubtotal');
+      const checkoutShipping = document.getElementById('checkoutShipping');
+      const checkoutTotal = document.getElementById('checkoutTotal');
+      
+      if (cart.length === 0) return;
+      
+      checkoutItems.innerHTML = cart.map(item => `
+        <div class="flex justify-between items-center py-2">
+          <div class="flex items-center space-x-3">
+            <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded" onerror="this.src='https://via.placeholder.com/48x48/f3f4f6/6b7280?text=Bild'">
+            <div>
+              <span class="text-sm font-medium">${item.name}</span>
+              <span class="text-xs text-gray-500 block">Menge: ${item.quantity}</span>
+            </div>
+          </div>
+          <span class="font-medium">€${(item.price * item.quantity).toFixed(2)}</span>
+        </div>
+      `).join('');
+      
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const shipping = subtotal >= 39 ? 0 : 4.99;
+      const total = subtotal + shipping;
+      
+      checkoutSubtotal.textContent = `€${subtotal.toFixed(2)}`;
+      checkoutShipping.textContent = shipping === 0 ? 'Kostenlos' : `€${shipping.toFixed(2)}`;
+      checkoutTotal.textContent = `€${total.toFixed(2)}`;
+    }
+    
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => notification.classList.add('show'), 100);
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // Checkout Form Handler
+    document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const paymentMethod = formData.get('payment');
+      
+      if (!paymentMethod) {
+        showNotification('❌ Bitte wählen Sie eine Zahlungsmethode aus.');
+        return;
+      }
+      
+      // Validate required fields
+      const requiredFields = ['firstName', 'lastName', 'email', 'address', 'postalCode', 'city', 'country'];
+      for (let field of requiredFields) {
+        if (!formData.get(field)) {
+          showNotification(`❌ Bitte füllen Sie das Feld "${field}" aus.`);
+          return;
+        }
+      }
+      
+      // Calculate total
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const shipping = subtotal >= 39 ? 0 : 4.99;
+      const total = (subtotal + shipping) * 100; // Convert to cents
+      
+      // Show processing
+      showNotification('⏳ Bestellung wird verarbeitet...');
+      
+      try {
+        if (paymentMethod === 'card' && stripe && cardElement) {
+          // Handle Stripe payment
+          const { error, paymentIntent } = await stripe.confirmCardPayment(
+            await createPaymentIntent(total, {
+              firstName: formData.get('firstName'),
+              lastName: formData.get('lastName'),
+              email: formData.get('email'),
+              address: formData.get('address'),
+              postalCode: formData.get('postalCode'),
+              city: formData.get('city'),
+              country: formData.get('country')
+            }),
+            {
+              payment_method: {
+                card: cardElement,
+                billing_details: {
+                  name: `${formData.get('firstName')} ${formData.get('lastName')}`,
+                  email: formData.get('email'),
+                  address: {
+                    line1: formData.get('address'),
+                    postal_code: formData.get('postalCode'),
+                    city: formData.get('city'),
+                    country: formData.get('country')
+                  }
+                }
+              }
+            }
+          );
+          
+          if (error) {
+            showNotification(`❌ Zahlung fehlgeschlagen: ${error.message}`);
+            return;
+          }
+          
+          if (paymentIntent.status === 'succeeded') {
+            processSuccessfulOrder(paymentMethod);
+          }
+        } else {
+          // Handle other payment methods (simulated)
+          setTimeout(() => {
+            processSuccessfulOrder(paymentMethod);
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Payment error:', error);
+        showNotification('❌ Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+      }
+    });
+    
+    async function createPaymentIntent(amount, customerData) {
+      try {
+        const response = await fetch(`${STRIPE_CONFIG.apiUrl}/create-payment-intent`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: amount,
+            currency: STRIPE_CONFIG.currency,
+            customerData: customerData,
+            orderData: {
+              orderId: `order_${Date.now()}`,
+              items: cart.map(item => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                image: item.image
+              })),
+              timestamp: new Date().toISOString()
+            }
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Payment setup failed');
+        }
+
+        const data = await response.json();
+        return data.clientSecret;
+      } catch (error) {
+        console.error('Payment intent creation error:', error);
+        throw new Error(`Zahlung konnte nicht initialisiert werden: ${error.message}`);
+      }
+    }
+    
+    function processSuccessfulOrder(paymentMethod) {
+      // Clear cart
+      cart = [];
+      saveCart();
+      displayCart();
+      closeCheckout();
+      
+      // Show success
+      showNotification('🎉 Vielen Dank für Ihre Bestellung! Sie erhalten eine Bestätigungsmail.');
+      
+      // Show detailed success message
+      setTimeout(() => {
+        alert(`Bestellung erfolgreich!\n\n✅ Gewählte Zahlungsmethode: ${getPaymentMethodName(paymentMethod)}\n📦 Lieferung in 2-3 Werktagen\n📧 Bestätigungsmail folgt\n\nVielen Dank für Ihr Vertrauen in ZENOVO!`);
+        
+        // Redirect to catalog
+        window.location.href = 'catalog.html';
+      }, 1000);
+    }
+    
+    function getPaymentMethodName(method) {
+      const methods = {
+        'paypal': 'PayPal',
+        'card': 'Kreditkarte',
+        'klarna': 'Klarna',
+        'giropay': 'Giropay',
+        'applepay': 'Apple Pay',
+        'googlepay': 'Google Pay'
+      };
+      return methods[method] || method;
+    }
+
+    // Initialize everything when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      displayCart();
+      
+      // Load Stripe configuration
+      if (typeof STRIPE_CONFIG !== 'undefined') {
+        initializeStripe();
+      }
+    });
+  </script>
+  
+  <!-- Include Stripe Configuration -->
+  <script src="stripe-config.js"></script>
+</body>
+</html>

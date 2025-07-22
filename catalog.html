@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZENOVO - Premium Bio-Kosmetik aus Deutschland</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://js.stripe.com/v3/"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -332,6 +333,15 @@
                 <span>Google Pay</span>
               </label>
             </div>
+            
+            <!-- Stripe Card Element Container (hidden by default) -->
+            <div id="card-element-container" style="display: none;" class="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-50">
+              <h5 class="text-md font-medium mb-3">Kreditkartendaten</h5>
+              <div id="card-element" class="p-3 border border-gray-300 rounded-lg bg-white">
+                <!-- Stripe card element will be mounted here -->
+              </div>
+              <div id="card-errors" role="alert" class="text-red-600 text-sm mt-2"></div>
+            </div>
           </div>
 
           <!-- Bestellübersicht -->
@@ -379,8 +389,12 @@
           Über uns
           <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
         </a>
-        <a href="#contact" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+        <a href="contact.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
           Kontakt
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+        </a>
+        <a href="cart.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+          Warenkorb
           <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
         </a>
       </nav>
@@ -624,6 +638,14 @@
   </footer>
 
   <script>
+    // Load Stripe configuration
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load stripe-config.js if available
+      if (typeof STRIPE_CONFIG !== 'undefined') {
+        initializeStripe();
+      }
+    });
+
     // Product Database (from catalog)
     const products = [
       // Bio-Kosmetik Produkte
@@ -727,7 +749,46 @@
     ];
 
     // Shopping Cart System
-    let cart = [];
+    let cart = JSON.parse(localStorage.getItem('zenovo_cart')) || [];
+    
+    // Save cart to localStorage
+    function saveCart() {
+      localStorage.setItem('zenovo_cart', JSON.stringify(cart));
+    }
+    
+    // Stripe Integration
+    let stripe;
+    let elements;
+    let cardElement;
+
+    function initializeStripe() {
+      if (typeof Stripe !== 'undefined' && typeof STRIPE_CONFIG !== 'undefined') {
+        stripe = Stripe(STRIPE_CONFIG.publishableKey);
+        elements = stripe.elements({
+          locale: 'de',
+          fonts: [
+            {
+              cssSrc: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
+            }
+          ]
+        });
+        
+        // Create card element for credit card payments
+        cardElement = elements.create('card', {
+          style: stripeElementStyle || {
+            base: {
+              fontSize: '16px',
+              color: '#374151',
+              fontFamily: 'Inter, sans-serif',
+              '::placeholder': {
+                color: '#9CA3AF',
+              }
+            }
+          },
+          hidePostalCode: true
+        });
+      }
+    }
     
     function addToCart(id, name, price, image) {
       const existingItem = cart.find(item => item.id === id);
@@ -744,6 +805,7 @@
         });
       }
       
+      saveCart();
       updateCartDisplay();
       updateCartCount();
       showNotification('✅ Produkt wurde zum Warenkorb hinzugefügt!');
@@ -751,6 +813,7 @@
     
     function removeFromCart(id) {
       cart = cart.filter(item => item.id !== id);
+      saveCart();
       updateCartDisplay();
       updateCartCount();
     }
@@ -762,6 +825,7 @@
         if (item.quantity <= 0) {
           removeFromCart(id);
         } else {
+          saveCart();
           updateCartDisplay();
           updateCartCount();
         }
@@ -817,32 +881,87 @@
     }
     
     function openCheckout() {
-      if (cart.length === 0) return;
+      if (cart.length === 0) {
+        showNotification('❌ Ihr Warenkorb ist leer!');
+        return;
+      }
       
       closeCart();
       updateCheckoutDisplay();
       document.getElementById('checkoutModal').classList.add('open');
+      
+      // Setup payment method listeners
+      setTimeout(() => {
+        setupPaymentMethodListeners();
+      }, 100);
     }
     
     function closeCheckout() {
       document.getElementById('checkoutModal').classList.remove('open');
+      
+      // Unmount card element if mounted
+      if (cardElement) {
+        try {
+          cardElement.unmount();
+        } catch(e) {
+          // Element already unmounted
+        }
+      }
+    }
+    
+    function setupPaymentMethodListeners() {
+      const paymentInputs = document.querySelectorAll('input[name="payment"]');
+      const cardElementContainer = document.getElementById('card-element-container');
+      
+      paymentInputs.forEach(input => {
+        input.addEventListener('change', function() {
+          if (this.value === 'card') {
+            cardElementContainer.style.display = 'block';
+            if (cardElement && !document.getElementById('card-element').hasChildNodes()) {
+              cardElement.mount('#card-element');
+            }
+          } else {
+            cardElementContainer.style.display = 'none';
+            if (cardElement) {
+              try {
+                cardElement.unmount();
+              } catch(e) {
+                // Element already unmounted
+              }
+            }
+          }
+        });
+      });
     }
     
     function updateCheckoutDisplay() {
       const checkoutItems = document.getElementById('checkoutItems');
       const checkoutSubtotal = document.getElementById('checkoutSubtotal');
+      const checkoutShipping = document.getElementById('checkoutShipping');
       const checkoutTotal = document.getElementById('checkoutTotal');
+      
+      if (cart.length === 0) return;
       
       checkoutItems.innerHTML = cart.map(item => `
         <div class="flex justify-between items-center py-2">
-          <span class="text-sm">${item.name} x${item.quantity}</span>
-          <span class="text-sm font-medium">€${(item.price * item.quantity).toFixed(2)}</span>
+          <div class="flex items-center space-x-3">
+            <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded" onerror="this.src='https://via.placeholder.com/48x48/f3f4f6/6b7280?text=Bild'">
+            <div>
+              <span class="text-sm font-medium">${item.name}</span>
+              <span class="text-xs text-gray-500 block">Menge: ${item.quantity}</span>
+            </div>
+          </div>
+          <span class="font-medium">€${(item.price * item.quantity).toFixed(2)}</span>
         </div>
       `).join('');
       
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const shipping = subtotal >= 39 ? 0 : 4.99;
+      const total = subtotal + shipping;
+      
       checkoutSubtotal.textContent = `€${subtotal.toFixed(2)}`;
-      checkoutTotal.textContent = `€${subtotal.toFixed(2)}`;
+      checkoutShipping.textContent = shipping === 0 ? 'Kostenlos' : `€${shipping.toFixed(2)}`;
+      checkoutTotal.textContent = `€${total.toFixed(2)}`;
     }
     
     // Product display functions
@@ -932,7 +1051,7 @@
     }
     
     // Checkout Form Handler
-    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+    document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const formData = new FormData(e.target);
@@ -943,25 +1062,127 @@
         return;
       }
       
+      // Validate required fields
+      const requiredFields = ['firstName', 'lastName', 'email', 'address', 'postalCode', 'city', 'country'];
+      for (let field of requiredFields) {
+        if (!formData.get(field)) {
+          showNotification(`❌ Bitte füllen Sie das Feld "${field}" aus.`);
+          return;
+        }
+      }
+      
+      // Calculate total
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const shipping = subtotal >= 39 ? 0 : 4.99;
+      const total = (subtotal + shipping) * 100; // Convert to cents
+      
       // Show processing
       showNotification('⏳ Bestellung wird verarbeitet...');
       
-      setTimeout(() => {
-        // Clear cart
-        cart = [];
-        updateCartDisplay();
-        updateCartCount();
-        closeCheckout();
-        
-        // Show success
-        showNotification('🎉 Vielen Dank für Ihre Bestellung! Sie erhalten eine Bestätigungsmail.');
-        
-        // Show detailed success message
-        setTimeout(() => {
-          alert(`Bestellung erfolgreich!\n\n✅ Gewählte Zahlungsmethode: ${getPaymentMethodName(paymentMethod)}\n📦 Lieferung in 2-3 Werktagen\n📧 Bestätigungsmail folgt\n\nVielen Dank für Ihr Vertrauen in ZENOVO!`);
-        }, 1000);
-      }, 2000);
+      try {
+        if (paymentMethod === 'card' && stripe && cardElement) {
+          // Handle Stripe payment
+          const { error, paymentIntent } = await stripe.confirmCardPayment(
+            await createPaymentIntent(total, {
+              firstName: formData.get('firstName'),
+              lastName: formData.get('lastName'),
+              email: formData.get('email'),
+              address: formData.get('address'),
+              postalCode: formData.get('postalCode'),
+              city: formData.get('city'),
+              country: formData.get('country')
+            }),
+            {
+              payment_method: {
+                card: cardElement,
+                billing_details: {
+                  name: `${formData.get('firstName')} ${formData.get('lastName')}`,
+                  email: formData.get('email'),
+                  address: {
+                    line1: formData.get('address'),
+                    postal_code: formData.get('postalCode'),
+                    city: formData.get('city'),
+                    country: formData.get('country')
+                  }
+                }
+              }
+            }
+          );
+          
+          if (error) {
+            showNotification(`❌ Zahlung fehlgeschlagen: ${error.message}`);
+            return;
+          }
+          
+          if (paymentIntent.status === 'succeeded') {
+            processSuccessfulOrder(paymentMethod);
+          }
+        } else {
+          // Handle other payment methods (simulated)
+          setTimeout(() => {
+            processSuccessfulOrder(paymentMethod);
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Payment error:', error);
+        showNotification('❌ Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+      }
     });
+    
+    async function createPaymentIntent(amount, customerData) {
+      try {
+        const response = await fetch(`${STRIPE_CONFIG.apiUrl}/create-payment-intent`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: amount,
+            currency: STRIPE_CONFIG.currency,
+            customerData: customerData,
+            orderData: {
+              orderId: `order_${Date.now()}`,
+              items: cart.map(item => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                image: item.image
+              })),
+              timestamp: new Date().toISOString()
+            }
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Payment setup failed');
+        }
+
+        const data = await response.json();
+        return data.clientSecret;
+      } catch (error) {
+        console.error('Payment intent creation error:', error);
+        throw new Error(`Zahlung konnte nicht initialisiert werden: ${error.message}`);
+      }
+    }
+    
+    function processSuccessfulOrder(paymentMethod) {
+      // Clear cart
+      cart = [];
+      saveCart();
+      updateCartDisplay();
+      updateCartCount();
+      closeCheckout();
+      
+      // Show success
+      showNotification('🎉 Vielen Dank für Ihre Bestellung! Sie erhalten eine Bestätigungsmail.');
+      
+      // Show detailed success message
+      setTimeout(() => {
+        alert(`Bestellung erfolgreich!\n\n✅ Gewählte Zahlungsmethode: ${getPaymentMethodName(paymentMethod)}\n📦 Lieferung in 2-3 Werktagen\n📧 Bestätigungsmail folgt\n\nVielen Dank für Ihr Vertrauen in ZENOVO!`);
+      }, 1000);
+    }
     
     function getPaymentMethodName(method) {
       const methods = {
@@ -993,6 +1214,7 @@
     document.addEventListener("DOMContentLoaded", function () {
       displayProducts();
       setupFilters();
+      updateCartCount();
       
       // Add some entrance animations
       setTimeout(() => {
@@ -1002,5 +1224,8 @@
       }, 100);
     });
   </script>
+  
+  <!-- Include Stripe Configuration -->
+  <script src="stripe-config.js"></script>
 </body>
 </html>

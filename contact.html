@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kontakt - ZENOVO | Premium Bio-Kosmetik aus Deutschland</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://js.stripe.com/v3/"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -63,6 +64,65 @@
     .form-field:focus {
       transform: translateY(-2px);
     }
+
+    /* Cart Styles */
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100vh;
+      background: white;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+      transition: right 0.3s ease;
+      z-index: 1001;
+      overflow-y: auto;
+    }
+    
+    .cart-sidebar.open { right: 0; }
+    
+    .cart-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .cart-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #10b981;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      z-index: 1003;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    @media (max-width: 640px) {
+      .cart-sidebar {
+        width: 100%;
+        right: -100%;
+      }
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-[#f9f7f3] via-[#faf8f5] to-[#f1efe8] text-gray-800">
@@ -90,6 +150,10 @@
           Kontakt
           <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-green-600"></span>
         </a>
+        <a href="cart.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+          Warenkorb
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
+        </a>
       </nav>
       <div class="flex space-x-4">
         <button aria-label="Konto öffnen" class="p-2 rounded-full hover:bg-green-100 transition-all duration-300 hover:scale-110">
@@ -97,7 +161,13 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
         </button>
-        <button aria-label="Warenkorb öffnen" class="p-2 rounded-full hover:bg-green-100 transition-all duration-300 hover:scale-110 relative">
+        <button aria-label="Warenkorb öffnen" class="p-2 rounded-full hover:bg-green-100 transition-all duration-300 hover:scale-110 relative" onclick="openCart()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6 8h13.2M7 13L5.4 5M17 13l1.6 8M6 21h12" />
+          </svg>
+          <span class="absolute -top-1 -right-1 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" id="cartCount">0</span>
+        </button>
+      </div>
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6 8h13.2M7 13L5.4 5M17 13l1.6 8M6 21h12" />
           </svg>
@@ -106,6 +176,37 @@
       </div>
     </div>
   </header>
+
+  <!-- Cart Overlay -->
+  <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="p-6 border-b">
+      <div class="flex justify-between items-center">
+        <h3 class="text-xl font-bold">Warenkorb</h3>
+        <button onclick="closeCart()" class="p-2 hover:bg-gray-100 rounded-full">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="p-6">
+      <div id="cartItems">
+        <p class="text-gray-500 text-center py-8">Ihr Warenkorb ist leer</p>
+      </div>
+      <div class="border-t pt-4 mt-4" id="cartTotal" style="display: none;">
+        <div class="flex justify-between items-center mb-4">
+          <span class="font-bold text-lg">Gesamt:</span>
+          <span class="font-bold text-xl text-green-600" id="totalPrice">€0.00</span>
+        </div>
+        <button onclick="window.location.href='catalog.html'" class="w-full bg-green-600 text-white py-3 rounded-full hover:bg-green-700 transition-colors font-semibold">
+          Zum Shop
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Hero Section -->
   <section class="py-20 bg-gradient-to-br from-[#fff8f0] via-[#f1efe8] to-[#e8f5e8] relative overflow-hidden">
@@ -624,7 +725,79 @@
     // Form submission (placeholder)
     document.querySelector('form').addEventListener('submit', function(e) {
       e.preventDefault();
-      alert('Vielen Dank für Ihre Nachricht! Wir melden uns innerhalb von 24 Stunden bei Ihnen.');
+      showNotification('✅ Vielen Dank für Ihre Nachricht! Wir melden uns innerhalb von 24 Stunden bei Ihnen.');
+    });
+
+    // Shopping Cart System (shared across pages)
+    let cart = JSON.parse(localStorage.getItem('zenovo_cart')) || [];
+    
+    function updateCartCount() {
+      const cartCount = document.getElementById('cartCount');
+      if (cartCount) {
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCount.textContent = totalItems;
+        cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
+      }
+    }
+    
+    function updateCartDisplay() {
+      const cartItems = document.getElementById('cartItems');
+      const cartTotal = document.getElementById('cartTotal');
+      const totalPrice = document.getElementById('totalPrice');
+      
+      if (!cartItems) return;
+      
+      if (cart.length === 0) {
+        cartItems.innerHTML = '<p class="text-gray-500 text-center py-8">Ihr Warenkorb ist leer</p>';
+        cartTotal.style.display = 'none';
+        return;
+      }
+      
+      cartItems.innerHTML = cart.map(item => `
+        <div class="flex items-center space-x-3 py-3 border-b">
+          <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg" onerror="this.src='https://via.placeholder.com/64x64/f3f4f6/6b7280?text=Bild'">
+          <div class="flex-1">
+            <h4 class="font-medium text-sm">${item.name}</h4>
+            <p class="text-green-600 font-bold">€${item.price.toFixed(2)}</p>
+            <p class="text-xs text-gray-500">Menge: ${item.quantity}</p>
+          </div>
+        </div>
+      `).join('');
+      
+      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      totalPrice.textContent = `€${total.toFixed(2)}`;
+      cartTotal.style.display = 'block';
+    }
+    
+    function openCart() {
+      document.getElementById('cartSidebar').classList.add('open');
+      document.getElementById('cartOverlay').classList.add('open');
+      updateCartDisplay();
+    }
+    
+    function closeCart() {
+      document.getElementById('cartSidebar').classList.remove('open');
+      document.getElementById('cartOverlay').classList.remove('open');
+    }
+    
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => notification.classList.add('show'), 100);
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // Initialize cart count on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      updateCartCount();
     });
 
     // Smooth scrolling for navigation links
@@ -641,5 +814,8 @@
       });
     });
   </script>
+  
+  <!-- Include Stripe Configuration -->
+  <script src="stripe-config.js"></script>
 </body>
 </html>
