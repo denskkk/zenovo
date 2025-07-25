@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stripe Test - ZENOVO</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    input[type="text"], input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    
+    #card-element {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: white;
+    }
+    
+    #card-errors {
+      color: #fa755a;
+      margin-top: 10px;
+    }
+    
+    button {
+      background: #5469d4;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+    
+    button:hover {
+      background: #4056c6;
+    }
+    
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    
+    .success {
+      color: green;
+      padding: 10px;
+      background: #f0f8f0;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+    
+    .error {
+      color: red;
+      padding: 10px;
+      background: #fdf0f0;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 ZENOVO Stripe Test</h1>
+  
+  <form id="payment-form">
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" value="test@example.com" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" value="Test User" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="card-element">Kreditkarte:</label>
+      <div id="card-element">
+        <!-- Stripe Elements will create form elements here -->
+      </div>
+      <div id="card-errors" role="alert"></div>
+    </div>
+    
+    <button type="submit" id="submit-button">Zahlung testen (€10.00)</button>
+  </form>
+  
+  <div id="payment-result"></div>
+  
+  <div style="margin-top: 30px; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+    <h3>🧪 Tестovые карты:</h3>
+    <ul>
+      <li><strong>4242 4242 4242 4242</strong> - Успешная оплата</li>
+      <li><strong>4000 0000 0000 0002</strong> - Отклонена банком</li>
+      <li><strong>4000 0025 0000 3155</strong> - Требует 3D Secure</li>
+    </ul>
+    <p><strong>Срок:</strong> любая будущая дата (12/25)<br>
+    <strong>CVC:</strong> любые 3 цифры (123)</p>
+  </div>
+
+  <script src="stripe-config.js"></script>
+  <script>
+    console.log('🚀 Тестовая страница загружена');
+    console.log('STRIPE_CONFIG:', typeof STRIPE_CONFIG !== 'undefined' ? '✅ Доступен' : '❌ Не найден');
+    console.log('Stripe:', typeof Stripe !== 'undefined' ? '✅ Доступен' : '❌ Не найден');
+    
+    let stripe, elements, cardElement;
+    
+    // Небольшая задержка для загрузки всех скриптов
+    setTimeout(() => {
+      console.log('🔧 Инициализация Stripe...');
+      
+      if (typeof STRIPE_CONFIG !== 'undefined' && typeof Stripe !== 'undefined') {
+        stripe = Stripe(STRIPE_CONFIG.publishableKey);
+        console.log('✅ Stripe экземпляр создан');
+        
+        elements = stripe.elements();
+        console.log('✅ Elements создан');
+        
+        // Создаем карточный элемент
+        cardElement = elements.create('card', {
+          style: {
+            base: {
+              fontSize: '16px',
+              color: '#424770',
+              fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+              fontSmoothing: 'antialiased',
+              '::placeholder': {
+                color: '#aab7c4',
+              },
+            },
+            invalid: {
+              color: '#9e2146',
+            },
+          },
+        });
+        
+        console.log('✅ Card element создан');
+        
+        // Монтируем элемент
+        cardElement.mount('#card-element');
+        console.log('✅ Card element смонтирован');
+        
+        // Добавляем обработчики
+        cardElement.on('ready', function() {
+          console.log('🎉 Card element готов к использованию!');
+        });
+        
+        cardElement.on('change', function(event) {
+          console.log('💳 Card change:', event);
+          const displayError = document.getElementById('card-errors');
+          if (event.error) {
+            displayError.textContent = event.error.message;
+            console.log('❌ Card error:', event.error.message);
+          } else {
+            displayError.textContent = '';
+            if (event.complete) {
+              console.log('✅ Card complete');
+            }
+          }
+        });
+        
+        // Обработчик формы
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', async function(event) {
+          event.preventDefault();
+          
+          const submitButton = document.getElementById('submit-button');
+          const resultDiv = document.getElementById('payment-result');
+          
+          submitButton.disabled = true;
+          submitButton.textContent = 'Обработка...';
+          resultDiv.innerHTML = '';
+          
+          console.log('💳 Начинаем обработку платежа...');
+          
+          try {
+            // Создаем payment intent
+            console.log('🔧 Создание payment intent...');
+            const response = await fetch(`${STRIPE_CONFIG.apiUrl}/create-payment-intent`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                amount: 1000, // €10.00 in cents
+                currency: 'eur',
+                customerData: {
+                  firstName: 'Test',
+                  lastName: 'User',
+                  email: document.getElementById('email').value,
+                  address: 'Test Street 1',
+                  postalCode: '12345',
+                  city: 'Berlin',
+                  country: 'DE'
+                },
+                orderData: {
+                  orderId: `test_${Date.now()}`,
+                  items: [{
+                    id: 'test',
+                    name: 'Test Product',
+                    price: 10.00,
+                    quantity: 1
+                  }]
+                }
+              })
+            });
+            
+            if (!response.ok) {
+              throw new Error('Payment setup failed');
+            }
+            
+            const { clientSecret } = await response.json();
+            console.log('✅ Payment intent создан');
+            
+            // Подтверждаем платеж
+            console.log('🔧 Подтверждение платежа...');
+            const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+              payment_method: {
+                card: cardElement,
+                billing_details: {
+                  name: document.getElementById('name').value,
+                  email: document.getElementById('email').value,
+                },
+              },
+            });
+            
+            if (error) {
+              console.error('❌ Payment failed:', error);
+              resultDiv.innerHTML = `<div class="error">❌ Zahlung fehlgeschlagen: ${error.message}</div>`;
+            } else if (paymentIntent.status === 'succeeded') {
+              console.log('🎉 Payment succeeded');
+              resultDiv.innerHTML = `<div class="success">✅ Zahlung erfolgreich! Payment ID: ${paymentIntent.id}</div>`;
+            }
+            
+          } catch (error) {
+            console.error('❌ Error:', error);
+            resultDiv.innerHTML = `<div class="error">❌ Fehler: ${error.message}</div>`;
+          }
+          
+          submitButton.disabled = false;
+          submitButton.textContent = 'Zahlung testen (€10.00)';
+        });
+        
+      } else {
+        console.error('❌ Необходимые зависимости не найдены');
+        document.getElementById('payment-result').innerHTML = '<div class="error">❌ Stripe configuration not found</div>';
+      }
+    }, 500);
+  </script>
+</body>
+</html>

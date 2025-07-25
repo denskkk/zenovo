@@ -4,8 +4,51 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZENOVO - Premium Bio-Kosmetik aus Deutschland</title>
+  <meta name="description" content="Entdecken Sie unsere komplette Kollektion an Premium Bio-Kosmetik. Natürliche Schönheit, nachhaltig produziert in Deutschland.">
+  <meta name="keywords" content="Bio-Kosmetik Katalog, natürliche Hautpflege, vegan, Deutschland, ZENOVO Produkte">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2d5a27">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ZENOVO Katalog">
+  <link rel="apple-touch-icon" href="logo.png">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://js.stripe.com/v3/"></script>
+  <!-- Stripe Buy Button Script -->
+  <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+  
+  <!-- Schema.org markup for product catalog -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "ZENOVO Bio-Kosmetik Katalog",
+    "description": "Komplette Kollektion an Premium Bio-Kosmetik und nachhaltigen Wellness-Produkten",
+    "url": "https://zenovo.de/catalog.html",
+    "mainEntity": {
+      "@type": "ItemList",
+      "name": "Bio-Kosmetik Produkte",
+      "numberOfItems": 12
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://zenovo.de"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Katalog",
+          "item": "https://zenovo.de/catalog.html"
+        }
+      ]
+    }
+  }
+  </script>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -58,27 +101,28 @@
     .product-card {
       transition: all 0.3s ease;
       background: white;
-      border-radius: 12px;
+      border-radius: 16px;
       overflow: hidden;
       height: 100%;
       display: flex;
       flex-direction: column;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
     
     .product-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
 
     .product-image {
       width: 100%;
-      height: 200px;
+      height: 280px;
       object-fit: cover;
       object-position: center;
     }
 
     .product-content {
-      padding: 1.5rem;
+      padding: 2rem;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -86,13 +130,15 @@
 
     .product-description {
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 4;
+      line-clamp: 4;
       -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;
-      line-height: 1.5;
-      height: 4.5em;
-      margin-bottom: 1rem;
+      line-height: 1.6;
+      height: 6.4em;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
     }
 
     .product-footer {
@@ -100,355 +146,303 @@
       padding-top: 1rem;
     }
 
-    /* Cart Styles */
-    .cart-sidebar {
-      position: fixed;
-      top: 0;
-      right: -400px;
-      width: 400px;
-      height: 100vh;
-      background: white;
-      box-shadow: -5px 0 20px rgba(0,0,0,0.1);
-      transition: right 0.3s ease;
-      z-index: 1000;
-      overflow-y: auto;
-    }
-    
-    .cart-sidebar.open {
-      right: 0;
-    }
-    
-    .cart-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-      z-index: 999;
-    }
-    
-    .cart-overlay.open {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    /* Checkout Modal */
-    .checkout-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-      z-index: 1001;
-    }
-    
-    .checkout-modal.open {
-      opacity: 1;
-      visibility: visible;
-    }
-    
-    .checkout-content {
-      background: white;
-      border-radius: 20px;
+    /* Modern Stripe Buy Button Styling */
+    .stripe-container {
       max-width: 600px;
-      width: 90%;
-      max-height: 90vh;
-      overflow-y: auto;
-      transform: scale(0.9);
-      transition: transform 0.3s ease;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.95));
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.3);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
     
-    .checkout-modal.open .checkout-content {
-      transform: scale(1);
+    stripe-buy-button {
+      width: 100% !important;
+      --stripe-buy-button-height: 44px;
+      --stripe-buy-button-font-size: 15px;
+      --stripe-buy-button-font-weight: 600;
+      --stripe-buy-button-border-radius: 12px;
+      --stripe-buy-button-background-color: #16a34a;
+      --stripe-buy-button-text-color: white;
+      --stripe-buy-button-border-color: #16a34a;
+      box-shadow: 0 4px 14px 0 rgba(22, 163, 74, 0.39);
+      transition: all 0.3s ease;
+    }
+    
+    stripe-buy-button:hover {
+      --stripe-buy-button-background-color: #15803d !important;
+      --stripe-buy-button-border-color: #15803d !important;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 25px 0 rgba(22, 163, 74, 0.4);
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #16a34a, #22c55e, #4ade80);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     /* Responsive Design */
     @media (max-width: 640px) {
-      .cart-sidebar {
-        width: 100%;
-        right: -100%;
-      }
       .product-image {
-        height: 180px;
+        height: 240px;
       }
       .product-content {
-        padding: 1rem;
+        padding: 1.5rem;
+      }
+      .product-description {
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        height: 4.8em;
+      }
+      .hero-title {
+        font-size: 2rem !important;
+        line-height: 2.5rem !important;
+      }
+      .hero-subtitle {
+        font-size: 1.125rem !important;
+        line-height: 1.75rem !important;
+      }
+      .stripe-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+      stripe-buy-button {
+        --stripe-buy-button-height: 44px;
+        --stripe-buy-button-font-size: 14px;
       }
     }
     
-    @media (min-width: 641px) and (max-width: 1024px) {
+    @media (min-width: 641px) and (max-width: 768px) {
       .product-image {
-        height: 220px;
+        height: 300px;
+      }
+      .product-content {
+        padding: 1.75rem;
+      }
+      .stripe-container {
+        margin: 1.5rem;
+      }
+      stripe-buy-button {
+        --stripe-buy-button-height: 46px;
+        --stripe-buy-button-font-size: 15px;
+      }
+    }
+    
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .product-image {
+        height: 320px;
+      }
+      .product-content {
+        padding: 2rem;
+      }
+      stripe-buy-button {
+        --stripe-buy-button-height: 48px;
+        --stripe-buy-button-font-size: 16px;
       }
     }
     
     @media (min-width: 1025px) {
       .product-image {
-        height: 250px;
+        height: 350px;
+      }
+      .product-content {
+        padding: 2.25rem;
+      }
+      stripe-buy-button {
+        --stripe-buy-button-height: 50px;
+        --stripe-buy-button-font-size: 16px;
       }
     }
 
-    /* Success notification */
-    .notification {
+    /* Modal Styles */
+    .modal {
+      display: none;
       position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #10b981;
-      color: white;
-      padding: 1rem 1.5rem;
-      border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      z-index: 1002;
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
     }
     
-    .notification.show {
-      transform: translateX(0);
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      animation: modalSlideIn 0.3s ease-out;
+      position: relative;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes modalSlideIn {
+      from { 
+        opacity: 0;
+        transform: scale(0.9) translateY(-30px);
+      }
+      to { 
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(0, 0, 0, 0.1);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+    
+    .modal-close:hover {
+      background: rgba(0, 0, 0, 0.2);
+      transform: scale(1.1);
+    }
+    
+    .detail-btn {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 12px;
+      width: 100%;
+    }
+    
+    .detail-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(5, 150, 105, 0.3);
+    }
+    
+    /* Media Queries for Modal */
+    @media (max-width: 768px) {
+      .modal-content {
+        max-width: 95%;
+        margin: 20px;
+      }
+    }
+
+    /* Mobile Navigation */
+    @media (max-width: 768px) {
+      .desktop-nav {
+        display: none;
+      }
+      .mobile-menu-button {
+        display: block;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .desktop-nav {
+        display: block;
+      }
+      .mobile-menu-button {
+        display: none;
+      }
     }
   </style>
 </head>
 <body class="bg-gradient-to-br from-[#f9f7f3] via-[#faf8f5] to-[#f1efe8] text-gray-800">
 
-  <!-- Cart Overlay -->
-  <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
-
-  <!-- Cart Sidebar -->
-  <div class="cart-sidebar" id="cartSidebar">
-    <div class="p-6 border-b">
-      <div class="flex justify-between items-center">
-        <h3 class="text-xl font-bold">Warenkorb</h3>
-        <button onclick="closeCart()" class="p-2 hover:bg-gray-100 rounded-full">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div class="p-6">
-      <div id="cartItems">
-        <p class="text-gray-500 text-center py-8">Ihr Warenkorb ist leer</p>
-      </div>
-      <div class="border-t pt-4 mt-4" id="cartTotal" style="display: none;">
-        <div class="flex justify-between items-center mb-4">
-          <span class="font-bold text-lg">Gesamt:</span>
-          <span class="font-bold text-xl text-green-600" id="totalPrice">€0.00</span>
-        </div>
-        <button onclick="openCheckout()" class="w-full bg-green-600 text-white py-3 rounded-full hover:bg-green-700 transition-colors font-semibold">
-          Zur Kasse
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Checkout Modal -->
-  <div class="checkout-modal" id="checkoutModal">
-    <div class="checkout-content">
-      <div class="p-6 border-b">
-        <div class="flex justify-between items-center">
-          <h3 class="text-2xl font-bold">Checkout</h3>
-          <button onclick="closeCheckout()" class="p-2 hover:bg-gray-100 rounded-full">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        </div>
-      </div>
-      <div class="p-6">
-        <form id="checkoutForm">
-          <!-- Kundendaten -->
-          <div class="mb-6">
-            <h4 class="text-lg font-semibold mb-4">Kundendaten</h4>
-            <div class="grid grid-cols-2 gap-4 mb-4">
-              <input type="text" name="firstName" placeholder="Vorname" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-              <input type="text" name="lastName" placeholder="Nachname" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-            </div>
-            <input type="email" name="email" placeholder="E-Mail-Adresse" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mb-4">
-            <input type="tel" name="phone" placeholder="Telefonnummer" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-          </div>
-
-          <!-- Lieferadresse -->
-          <div class="mb-6">
-            <h4 class="text-lg font-semibold mb-4">Lieferadresse</h4>
-            <input type="text" name="address" placeholder="Straße und Hausnummer" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mb-4">
-            <div class="grid grid-cols-2 gap-4 mb-4">
-              <input type="text" name="postalCode" placeholder="PLZ" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-              <input type="text" name="city" placeholder="Stadt" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-            </div>
-            <select name="country" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-              <option value="">Land auswählen</option>
-              <option value="DE">Deutschland</option>
-              <option value="AT">Österreich</option>
-              <option value="CH">Schweiz</option>
-            </select>
-          </div>
-
-          <!-- Zahlungsmethode -->
-          <div class="mb-6">
-            <h4 class="text-lg font-semibold mb-4">Zahlungsmethode</h4>
-            <div class="space-y-3">
-              <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
-                <input type="radio" name="payment" value="paypal" class="mr-3">
-                <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal" class="h-6 mr-3">
-                <span>PayPal</span>
-              </label>
-              <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
-                <input type="radio" name="payment" value="card" class="mr-3">
-                <div class="flex space-x-2 mr-3">
-                  <img src="https://img.icons8.com/color/30/visa.png" alt="Visa">
-                  <img src="https://img.icons8.com/color/30/mastercard.png" alt="MasterCard">
-                  <img src="https://img.icons8.com/color/30/amex.png" alt="AmEx">
-                </div>
-                <span>Kreditkarte</span>
-              </label>
-              <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
-                <input type="radio" name="payment" value="klarna" class="mr-3">
-                <span class="text-pink-600 font-bold mr-3">Klarna</span>
-                <span>Rechnung/Ratenzahlung</span>
-              </label>
-              <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
-                <input type="radio" name="payment" value="giropay" class="mr-3">
-                <span class="text-blue-600 font-bold mr-3">giropay</span>
-                <span>Sofortüberweisung</span>
-              </label>
-              <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
-                <input type="radio" name="payment" value="applepay" class="mr-3">
-                <span class="mr-3">🍎</span>
-                <span>Apple Pay</span>
-              </label>
-              <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
-                <input type="radio" name="payment" value="googlepay" class="mr-3">
-                <span class="text-blue-600 font-bold mr-3">G</span>
-                <span>Google Pay</span>
-              </label>
-            </div>
-            
-            <!-- Stripe Card Element Container (hidden by default) -->
-            <div id="card-element-container" style="display: none;" class="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-50">
-              <h5 class="text-md font-medium mb-3">Kreditkartendaten</h5>
-              <div id="card-element" class="p-3 border border-gray-300 rounded-lg bg-white">
-                <!-- Stripe card element will be mounted here -->
-              </div>
-              <div id="card-errors" role="alert" class="text-red-600 text-sm mt-2"></div>
-            </div>
-          </div>
-
-          <!-- Bestellübersicht -->
-          <div class="mb-6 bg-gray-50 p-4 rounded-lg">
-            <h4 class="text-lg font-semibold mb-4">Bestellübersicht</h4>
-            <div id="checkoutItems"></div>
-            <div class="border-t pt-3 mt-3">
-              <div class="flex justify-between text-sm text-gray-600 mb-1">
-                <span>Zwischensumme:</span>
-                <span id="checkoutSubtotal">€0.00</span>
-              </div>
-              <div class="flex justify-between text-sm text-gray-600 mb-1">
-                <span>Versand:</span>
-                <span id="checkoutShipping">Kostenlos</span>
-              </div>
-              <div class="flex justify-between font-bold text-lg pt-2 border-t">
-                <span>Gesamt:</span>
-                <span id="checkoutTotal" class="text-green-600">€0.00</span>
-              </div>
-            </div>
-          </div>
-
-          <button type="submit" class="w-full bg-green-600 text-white py-4 rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg">
-            Jetzt kostenpflichtig bestellen
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-
   <!-- Header -->
   <header class="glass-effect sticky top-0 z-50 p-4 shadow-lg">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
-      <h1 class="text-3xl font-display font-bold gradient-text animate-float">🌿 ZENOVO</h1>
-      <nav class="space-x-8 hidden md:block">
-        <a href="index.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+      <h1 class="text-2xl md:text-3xl font-display font-bold gradient-text animate-float">🌿 ZENOVO</h1>
+      <nav class="desktop-nav space-x-4 md:space-x-8">
+        <a href="index.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group text-sm md:text-base">
           Startseite
           <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
         </a>
-        <a href="catalog.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+        <a href="catalog.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group text-sm md:text-base">
           Produkte
           <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
         </a>
-        <a href="#about" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+        <a href="about.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group text-sm md:text-base">
           Über uns
           <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
         </a>
-        <a href="contact.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
+        <a href="contact.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group text-sm md:text-base">
           Kontakt
           <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
         </a>
-        <a href="cart.html" class="hover:text-green-600 transition-all duration-300 font-medium relative group">
-          Warenkorb
-          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 group-hover:w-full transition-all duration-300"></span>
-        </a>
       </nav>
-      <div class="flex space-x-4">
+      <div class="flex items-center space-x-2 md:space-x-4">
         <button aria-label="Konto öffnen" class="p-2 rounded-full hover:bg-green-100 transition-all duration-300 hover:scale-110">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
         </button>
-        <button aria-label="Warenkorb öffnen" class="p-2 rounded-full hover:bg-green-100 transition-all duration-300 hover:scale-110 relative" onclick="openCart()">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6 8h13.2M7 13L5.4 5M17 13l1.6 8M6 21h12" />
-          </svg>
-          <span class="absolute -top-1 -right-1 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" id="cartCount">0</span>
-        </button>
         <!-- Mobile menu button -->
-        <button class="md:hidden p-2 rounded-full hover:bg-green-100" onclick="toggleMobileMenu()">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button class="mobile-menu-button p-2 rounded-full hover:bg-green-100" onclick="toggleMobileMenu()">
+          <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
       </div>
     </div>
     <!-- Mobile menu -->
-    <div id="mobileMenu" class="md:hidden mt-4 space-y-2 bg-white/90 rounded-lg p-4 hidden">
-      <a href="#home" class="block py-2 hover:text-green-600 transition-colors">Startseite</a>
-      <a href="#products" class="block py-2 hover:text-green-600 transition-colors">Produkte</a>
-      <a href="#about" class="block py-2 hover:text-green-600 transition-colors">Über uns</a>
-      <a href="#contact" class="block py-2 hover:text-green-600 transition-colors">Kontakt</a>
+    <div id="mobileMenu" class="mt-4 space-y-2 bg-white/95 rounded-lg p-4 hidden backdrop-blur-sm">
+      <a href="index.html" class="block py-2 hover:text-green-600 transition-colors">Startseite</a>
+      <a href="catalog.html" class="block py-2 hover:text-green-600 transition-colors">Produkte</a>
+      <a href="about.html" class="block py-2 hover:text-green-600 transition-colors">Über uns</a>
+      <a href="contact.html" class="block py-2 hover:text-green-600 transition-colors">Kontakt</a>
     </div>
   </header>
 
   <!-- Hero Banner -->
-  <section id="home" class="text-center py-24 bg-gradient-to-br from-[#fff8f0] via-[#f1efe8] to-[#e8f5e8] relative overflow-hidden">
+  <section id="home" class="text-center py-12 md:py-24 bg-gradient-to-br from-[#fff8f0] via-[#f1efe8] to-[#e8f5e8] relative overflow-hidden">
     <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent shimmer"></div>
     <div class="max-w-6xl mx-auto px-4 relative z-10">
-      <div class="mb-8 w-32 h-32 mx-auto bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-6xl animate-float drop-shadow-2xl">
+      <div class="mb-6 md:mb-8 w-24 h-24 md:w-32 md:h-32 mx-auto bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-4xl md:text-6xl animate-float drop-shadow-2xl">
         🌿
       </div>
-      <h2 class="text-3xl md:text-5xl font-display leading-relaxed mb-6 animate-fadeInUp gradient-text font-bold">
+      <h2 class="hero-title text-2xl md:text-3xl lg:text-5xl font-display leading-tight md:leading-relaxed mb-4 md:mb-6 animate-fadeInUp gradient-text font-bold px-2">
         Premium Bio-Kosmetik aus Deutschland
       </h2>
-      <p class="text-xl md:text-2xl font-display mb-4 text-gray-700">
+      <p class="hero-subtitle text-lg md:text-xl lg:text-2xl font-display mb-3 md:mb-4 text-gray-700 px-2">
         Natürliche Schönheit • Nachhaltige Pflege • Zertifizierte Qualität
       </p>
-      <p class="mt-8 text-xl font-light max-w-4xl mx-auto text-gray-700 leading-relaxed animate-fadeInUp">
+      <p class="mt-6 md:mt-8 text-base md:text-xl font-light max-w-4xl mx-auto text-gray-700 leading-relaxed animate-fadeInUp px-4">
         Entdecken Sie unsere exklusive Kollektion an Bio-Kosmetik und nachhaltigen Haushaltsprodukten. 
         Jedes Produkt wird mit Liebe zur Natur und höchsten Qualitätsstandards hergestellt.
       </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center mt-10">
-        <a href="#products" class="inline-block px-10 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-full hover:from-green-700 hover:to-green-800 transition-all duration-300 transform hover:scale-105 shadow-2xl font-semibold text-lg">
+      <div class="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center mt-8 md:mt-10 px-4">
+        <a href="#products" class="inline-block px-6 md:px-10 py-3 md:py-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-full hover:from-green-700 hover:to-green-800 transition-all duration-300 transform hover:scale-105 shadow-2xl font-semibold text-base md:text-lg">
           Jetzt einkaufen
         </a>
-        <a href="#about" class="inline-block px-10 py-4 bg-white/80 text-green-700 rounded-full hover:bg-white transition-all duration-300 transform hover:scale-105 shadow-xl font-semibold text-lg border border-green-200">
+        <a href="#about" class="inline-block px-6 md:px-10 py-3 md:py-4 bg-white/80 text-green-700 rounded-full hover:bg-white transition-all duration-300 transform hover:scale-105 shadow-xl font-semibold text-base md:text-lg border border-green-200">
           Mehr erfahren
         </a>
       </div>
@@ -456,54 +450,96 @@
   </section>
 
   <!-- Trust Indicators -->
-  <section class="py-12 bg-white shadow-sm">
+  <section class="py-8 md:py-12 bg-white shadow-sm">
     <div class="max-w-7xl mx-auto px-4">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-        <div class="animate-fadeInUp">
-          <div class="text-4xl mb-2">🇩🇪</div>
-          <h3 class="font-bold text-gray-800">Made in Germany</h3>
-          <p class="text-sm text-gray-600">Höchste Qualitätsstandards</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-center">
+        <div class="animate-fadeInUp p-4">
+          <div class="text-2xl md:text-4xl mb-2">🇩🇪</div>
+          <h3 class="font-bold text-gray-800 text-sm md:text-base">Made in Germany</h3>
+          <p class="text-xs md:text-sm text-gray-600">Höchste Qualitätsstandards</p>
         </div>
-        <div class="animate-fadeInUp" style="animation-delay: 0.1s">
-          <div class="text-4xl mb-2">🌱</div>
-          <h3 class="font-bold text-gray-800">100% Bio</h3>
-          <p class="text-sm text-gray-600">Zertifizierte Inhaltsstoffe</p>
+        <div class="animate-fadeInUp p-4" style="animation-delay: 0.1s">
+          <div class="text-2xl md:text-4xl mb-2">🌱</div>
+          <h3 class="font-bold text-gray-800 text-sm md:text-base">100% Bio</h3>
+          <p class="text-xs md:text-sm text-gray-600">Zertifizierte Inhaltsstoffe</p>
         </div>
-        <div class="animate-fadeInUp" style="animation-delay: 0.2s">
-          <div class="text-4xl mb-2">🚚</div>
-          <h3 class="font-bold text-gray-800">Kostenloser Versand</h3>
-          <p class="text-sm text-gray-600">Ab 39€ Bestellwert</p>
+        <div class="animate-fadeInUp p-4" style="animation-delay: 0.2s">
+          <div class="text-2xl md:text-4xl mb-2">🚚</div>
+          <h3 class="font-bold text-gray-800 text-sm md:text-base">Kostenloser Versand</h3>
+          <p class="text-xs md:text-sm text-gray-600">Ab 39€ Bestellwert</p>
         </div>
-        <div class="animate-fadeInUp" style="animation-delay: 0.3s">
-          <div class="text-4xl mb-2">🔒</div>
-          <h3 class="font-bold text-gray-800">Sicher bezahlen</h3>
-          <p class="text-sm text-gray-600">SSL-verschlüsselt</p>
+        <div class="animate-fadeInUp p-4" style="animation-delay: 0.3s">
+          <div class="text-2xl md:text-4xl mb-2">🔒</div>
+          <h3 class="font-bold text-gray-800 text-sm md:text-base">Sicher bezahlen</h3>
+          <p class="text-xs md:text-sm text-gray-600">SSL-verschlüsselt</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Featured Products -->
-  <section id="products" class="py-20 bg-gradient-to-br from-[#faf9f6] to-[#f1efe8] relative">
+  <section id="products" class="py-12 md:py-20 bg-gradient-to-br from-[#faf9f6] to-[#f1efe8] relative">
     <div class="max-w-7xl mx-auto px-4">
-      <h3 class="text-4xl font-display text-center mb-16 gradient-text font-bold">Unsere beliebtesten Produkte</h3>
+      <h3 class="text-2xl md:text-4xl font-display text-center mb-8 md:mb-16 gradient-text font-bold">Unsere beliebtesten Produkte</h3>
       
       <!-- Filter Buttons -->
-      <div class="flex justify-center gap-4 flex-wrap mb-12">
-        <button class="filter-btn active px-6 py-3 bg-gray-200 text-gray-700 rounded-full font-medium transition-all hover:transform hover:-translate-y-1" data-category="all">
+      <div class="flex justify-center gap-2 md:gap-4 flex-wrap mb-8 md:mb-12 px-2">
+        <button class="filter-btn active px-3 md:px-6 py-2 md:py-3 bg-gray-200 text-gray-700 rounded-full font-medium transition-all hover:transform hover:-translate-y-1 text-xs md:text-sm" data-category="all">
           Alle Produkte
         </button>
-        <button class="filter-btn px-6 py-3 bg-gray-200 text-gray-700 rounded-full font-medium transition-all hover:transform hover:-translate-y-1" data-category="bio-cosmetics">
+        <button class="filter-btn px-3 md:px-6 py-2 md:py-3 bg-gray-200 text-gray-700 rounded-full font-medium transition-all hover:transform hover:-translate-y-1 text-xs md:text-sm" data-category="bio-cosmetics">
           Bio-Kosmetik
         </button>
-        <button class="filter-btn px-6 py-3 bg-gray-200 text-gray-700 rounded-full font-medium transition-all hover:transform hover:-translate-y-1" data-category="home">
+        <button class="filter-btn px-3 md:px-6 py-2 md:py-3 bg-gray-200 text-gray-700 rounded-full font-medium transition-all hover:transform hover:-translate-y-1 text-xs md:text-sm" data-category="home">
           Haushaltsprodukte
         </button>
       </div>
 
       <!-- Products Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="products-container">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" id="products-container">
         <!-- Products will be loaded here -->
+      </div>
+      
+      <!-- Stripe Purchase Section -->
+      <div class="stripe-container text-center">
+        <h3 class="text-2xl md:text-3xl font-bold gradient-text mb-4">
+          Premium Bio-Kosmetik bestellen
+        </h3>
+        <p class="text-gray-600 mb-6 max-w-lg mx-auto">
+          Erleben Sie natürliche Schönheit mit unseren handverlesenen Bio-Produkten. 
+          Kostenloser Versand ab €35 in ganz Deutschland.
+        </p>
+        <div class="space-y-4">
+          <div class="flex items-center justify-center space-x-6 text-sm text-gray-500 mb-4">
+            <div class="flex items-center">
+              <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              Natürliche Inhaltsstoffe
+            </div>
+            <div class="flex items-center">
+              <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              Laborgeprüft
+            </div>
+            <div class="flex items-center">
+              <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              Nachhaltig verpackt
+            </div>
+          </div>
+          
+          <stripe-buy-button
+            buy-button-id="buy_btn_1Ro7jnDnazw9b0QRHFMWHoZw"
+            publishable-key="pk_live_51RlYHeDnazw9b0QRsKskNKyj2uIhk6FKM0Dt8vryvB5A8m5li9fKMnwSOnmBUaQbfsuNaoVTiLQ6XSrx9bzzzSYy00QKhz8fOs">
+          </stripe-buy-button>
+          
+          <p class="text-xs text-gray-500 mt-4">
+            🔒 Sichere Zahlung über Stripe • SSL-verschlüsselt • 30 Tage Rückgaberecht
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -637,334 +673,185 @@
     </div>
   </footer>
 
-  <script>
-    // Load Stripe configuration
-    document.addEventListener('DOMContentLoaded', function() {
-      // Load stripe-config.js if available
-      if (typeof STRIPE_CONFIG !== 'undefined') {
-        initializeStripe();
-      }
-    });
+  <!-- Product Detail Modal -->
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div id="modalContent">
+        <!-- Modal content will be inserted here -->
+      </div>
+    </div>
+  </div>
 
-    // Product Database (from catalog)
+  <script>
+    // Product Database with Stripe Buy Button IDs
     const products = [
-      // Bio-Kosmetik Produkte
+      // Bio-Kosmetik Produkte (первые 8 товаров)
       {
         id: 1,
         name: "Organic & Mineral Highlighter - Gold",
         description: "Organic and mineral ingredients working together to enhance your natural beauty. This highlighter will give you an unforgettable glow.",
+        detailedDescription: "Unser luxuriöser Gold-Highlighter vereint die Kraft organischer und mineralischer Inhaltsstoffe für einen atemberaubenden, natürlichen Glow. Diese Premium-Formel wurde speziell entwickelt, um Ihre natürliche Schönheit zu verstärken und Ihnen einen unvergesslichen Glanz zu verleihen.\n\nDieser Highlighter enthält sorgfältig ausgewählte Bio-Inhaltsstoffe wie Jojobaöl, Vitamin E und natürliche Goldpigmente. Die samtige Textur gleitet mühelos über die Haut und sorgt für eine gleichmäßige, buildbare Deckkraft. Perfekt für Wangenknochen, Nasenrücken, Cupid's Bow und innere Augenwinkel.\n\nBesonderheiten:\n• 100% natürliche und organische Inhaltsstoffe\n• Vegan und tierversuchsfrei\n• Langanhaltende Formel (bis zu 8 Stunden)\n• Für alle Hauttypen geeignet\n• Dermatologisch getestet\n• Nachhaltige Verpackung aus recyceltem Material",
         price: 24.90,
         category: "bio-cosmetics",
-        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/aa0/92b/79-/normal/organic-mineral-highlighter-gold-244207.jpg"
+        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/aa0/92b/79-/normal/organic-mineral-highlighter-gold-244207.jpg",
+        stripeButtonId: "buy_btn_1Roo4PDnazw9b0QRj32s0JNk",
+        ingredients: "Jojobaöl, Vitamin E, natürliche Goldpigmente, Sheabutter, Kokosöl",
+        usage: "Mit dem Finger oder einem Pinsel auf die gewünschten Stellen auftragen und sanft verblenden.",
+        benefits: ["Natürlicher Glow", "Langanhaltend", "Vegan", "Dermatologisch getestet"]
       },
       {
         id: 2,
         name: "Best Beard On The Block Organic Beard Oil",
         description: "Premium organic beard oil made with Argan and Jojoba oils combined with super conditioning Camelina oil for the perfect beard care.",
+        detailedDescription: "Unser Premium Bio-Bartöl ist die perfekte Lösung für die optimale Bartpflege. Diese exklusive Formel kombiniert hochwertiges Arganöl und Jojobaöl mit dem super pflegenden Camelina-Öl für eine umfassende Bartpflege.\n\nDieses luxuriöse Bartöl wurde speziell entwickelt, um trockene, spröde Barthaare zu nähren und zu konditionieren. Die reichhaltige Formel dringt tief in die Haarfollikel ein und sorgt für Geschmeidigkeit, Glanz und einen gesunden Look.\n\nVorteile:\n• Intensive Feuchtigkeit für Bart und Haut\n• Reduziert Juckreiz und Schuppenbildung\n• Verleiht natürlichen Glanz ohne Fettigkeit\n• Erleichtert das Styling und Kämmen\n• Angenehmer, maskuliner Duft\n• 100% biologische Inhaltsstoffe\n• Für alle Barttypen geeignet",
         price: 32.50,
         category: "bio-cosmetics",
-        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/92e/407/ac-/normal/il_570xN.1169900236_cd14.jpg"
+        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/92e/407/ac-/normal/il_570xN.1169900236_cd14.jpg",
+        stripeButtonId: "buy_btn_1RooHiDnazw9b0QR3JXFWpK3",
+        ingredients: "Arganöl, Jojobaöl, Camelina-Öl, ätherische Öle, Vitamin E",
+        usage: "3-5 Tropfen in die Handflächen geben, verreiben und gleichmäßig im Bart verteilen.",
+        benefits: ["Intensive Pflege", "Natürlicher Glanz", "Anti-Juckreiz", "Biologisch"]
       },
       {
         id: 3,
         name: "Organic Brightening Toner",
         description: "Brightening toner that helps even out skin tone and lighten discolorations. Made with distilled water, organic lemons and Witch Hazel.",
+        detailedDescription: "Unser aufhellender Bio-Toner ist eine revolutionäre Formel, die dabei hilft, den Hautton auszugleichen und Verfärbungen zu mildern. Diese sanfte, aber wirksame Lösung wurde mit destilliertem Wasser, Bio-Zitronen und Hamamelis entwickelt.\n\nDieser Toner ist perfekt für alle, die nach einer natürlichen Lösung für ungleichmäßigen Hautton suchen. Die Kombination aus Vitamin C-reichen Bio-Zitronen und beruhigendem Hamamelis sorgt für eine aufgehellte, gleichmäßige und strahlende Haut.\n\nHaupteigenschaften:\n• Gleicht den Hautton natürlich aus\n• Mildert dunkle Flecken und Verfärbungen\n• Strafft und verfeinert die Poren\n• Bereitet die Haut auf nachfolgende Pflege vor\n• pH-Wert ausbalanciert\n• Frei von Alkohol und aggressiven Chemikalien\n• Für empfindliche Haut geeignet",
         price: 16.90,
         category: "bio-cosmetics",
-        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/4b1/d36/70-/normal/data.jpg"
+        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/4b1/d36/70-/normal/data.jpg",
+        stripeButtonId: "buy_btn_1RooIhDnazw9b0QRFKNUYEHN",
+        ingredients: "Destilliertes Wasser, Bio-Zitronenextrakt, Hamamelis, Glycerin",
+        usage: "Nach der Reinigung mit einem Wattepad auf Gesicht und Hals auftragen.",
+        benefits: ["Hautaufhellung", "Porenverfeinerung", "pH-Ausgleich", "Alkoholfrei"]
       },
       {
         id: 4,
         name: "Organic Eyeliner / Eye Coal",
         description: "Natural eyeliner that glides on easily for a medium tone black. Made with natural oils, butters, and iron oxide.",
+        detailedDescription: "Unser natürlicher Bio-Eyeliner gleitet mühelos über das Augenlid und sorgt für eine mittlere schwarze Tönung, die perfekt für jeden Anlass ist. Diese innovative Formel wurde mit natürlichen Ölen, Buttern und Eisenoxid entwickelt.\n\nDieser Eyeliner bietet die perfekte Balance zwischen Präzision und Komfort. Die cremige Textur ermöglicht eine gleichmäßige Anwendung, während die langanhaltende Formel den ganzen Tag über für perfekte Linien sorgt.\n\nProduktvorteile:\n• Sanfte, cremige Textur für einfache Anwendung\n• Mittlere Deckkraft für natürlichen Look\n• Wasserfest und wischfest\n• Natürliche Inhaltsstoffe schonen die empfindliche Augenpartie\n• Präzise Anwendung möglich\n• Einfach zu entfernen mit Bio-Öl\n• Ophthalmologisch getestet\n• Vegan und tierversuchsfrei",
         price: 45.00,
         category: "bio-cosmetics",
-        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/5fd/034/74-/normal/il_fullxfull.1787546998_gsm9.jpg"
+        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/5fd/034/74-/normal/il_fullxfull.1787546998_gsm9.jpg",
+        stripeButtonId: "buy_btn_1RooJ5Dnazw9b0QRruCfSowI",
+        ingredients: "Natürliche Öle, Sheabutter, Eisenoxid, Candelillawachs, Vitamin E",
+        usage: "Entlang des Wimpernkranzes auftragen. Für intensiveren Look mehrmals auftragen.",
+        benefits: ["Wasserfest", "Präzise Anwendung", "Natürliche Formel", "Augenverträglich"]
       },
       {
         id: 5,
         name: "Organic Oatmeal Hand Soap",
         description: "Ultra gentle hand soap great for children or those with dry skin. Infused with actual organic oats for hydrating care.",
+        detailedDescription: "Unsere ultra-sanfte Bio-Haferflocken-Handseife ist speziell für Kinder und Menschen mit trockener Haut entwickelt worden. Diese einzigartige Formel ist mit echten Bio-Haferflocken angereichert und bietet eine feuchtigkeitsspendende Pflege.\n\nDie natürlichen Eigenschaften der Haferflocken wirken beruhigend und pflegend auf die Haut, während sie gleichzeitig eine gründliche, aber sanfte Reinigung ermöglichen. Perfekt für die ganze Familie.\n\nBesondere Eigenschaften:\n• Ultra-sanfte Formel für empfindliche Haut\n• Mit echten Bio-Haferflocken angereichert\n• Feuchtigkeitsspendend und pflegend\n• Ideal für Kinder und trockene Haut\n• Natürliche Inhaltsstoffe\n• Frei von Sulfaten und Parabenen\n• Dermatologisch getestet\n• Biologisch abbaubar",
         price: 19.90,
         category: "bio-cosmetics",
-        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/0c0/2b1/74-/normal/data.jpg"
+        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/0c0/2b1/74-/normal/data.jpg",
+        stripeButtonId: "buy_btn_1RooJRDnazw9b0QRMAG5yDPJ",
+        ingredients: "Bio-Haferflocken, Olivenöl, Kokosöl, Glycerin, natürliche Duftstoffe",
+        usage: "Mit warmem Wasser aufschäumen und gründlich abspülen.",
+        benefits: ["Ultra-sanft", "Feuchtigkeitsspendend", "Kindgerecht", "Sulfatfrei"]
       },
       {
         id: 6,
         name: "Organic Finishing Powder Setting",
         description: "Tiefenreinigendes Gel mit australischem Teebaumöl. Bekämpft Unreinheiten und verfeinert das Hautbild.",
+        detailedDescription: "Unser Bio-Finishing Powder ist das perfekte Setting-Produkt für ein makelloses, langanhaltende Make-up. Diese feine, transluzente Formel fixiert Ihr Make-up für den ganzen Tag und verleiht einen natürlichen, matten Finish.\n\nDieses Puder wurde speziell entwickelt, um überschüssigen Glanz zu kontrollieren, ohne die Haut auszutrocknen. Die ultra-feine Textur legt sich wie ein Schleier über die Haut und sorgt für einen ebenmäßigen, professionellen Look.\n\nVorteile:\n• Fixiert Make-up für bis zu 12 Stunden\n• Kontrolliert Glanz ohne Austrocknung\n• Transluzente Formel für alle Hauttöne\n• Minimiert das Erscheinungsbild der Poren\n• Leichte, atmungsaktive Textur\n• Mit natürlichen Mineralien angereichert\n• Für alle Hauttypen geeignet\n• Vegan und tierversuchsfrei",
         price: 21.90,
         category: "bio-cosmetics",
-        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/6d9/ac1/a1-/normal/data.jpg"
+        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/6d9/ac1/a1-/normal/data.jpg",
+        stripeButtonId: "buy_btn_1RooJuDnazw9b0QRyZYh92CG",
+        ingredients: "Natürliche Mineralien, Reisstärke, Silica, Vitamin E",
+        usage: "Mit einem Puderquast oder Pinsel über das gesamte Gesicht auftragen.",
+        benefits: ["Langanhaltend", "Mattiert", "Transluzent", "Porenverfeinernde"]
       },
       {
         id: 7,
         name: "Face Cream Facial Moisturizer Organic",
         description: "Rich facial cream that moisturizes your skin making it soft and supple. Enhanced with organic oils and butter for optimal care.",
+        detailedDescription: "Unsere reichhaltige Bio-Gesichtscreme spendet intensive Feuchtigkeit und macht Ihre Haut weich und geschmeidig. Diese luxuriöse Formel ist mit hochwertigen Bio-Ölen und natürlichen Buttern angereichert für eine optimale Hautpflege.\n\nDie Creme zieht schnell ein und hinterlässt ein seidiges, gepflegtes Hautgefühl ohne Fettfilm. Perfekt für die tägliche Anwendung sowohl morgens als auch abends.\n\nHaupteigenschaften:\n• Intensive Feuchtigkeitsversorgung für 24 Stunden\n• Mit wertvollen Bio-Ölen und natürlichen Buttern\n• Zieht schnell ein ohne Fettfilm\n• Stärkt die natürliche Hautbarriere\n• Anti-Aging Eigenschaften durch Vitamin E\n• Für alle Hauttypen geeignet\n• Nicht komedogen\n• Frei von Parabenen und Sulfaten",
         price: 21.90,
         category: "bio-cosmetics",
-        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/ce8/059/65-/normal/data.jpg"
+        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/ce8/059/65-/normal/data.jpg",
+        stripeButtonId: "buy_btn_1RooKNDnazw9b0QRMhkG8LgB",
+        ingredients: "Sheabutter, Jojobaöl, Hyaluronsäure, Vitamin E, Aloe Vera",
+        usage: "Morgens und abends auf die gereinigte Haut auftragen und sanft einmassieren.",
+        benefits: ["24h Feuchtigkeit", "Anti-Aging", "Schnell einziehend", "Parabenfrei"]
       },
       {
         id: 8,
         name: "Ultra-Nourishing Exfoliating Mask",
         description: "Anti-aging mask made with Beet, Acai Berry, Blueberry, Raspberry & Kiwi Seeds, packed with antioxidants.",
+        detailedDescription: "Unsere ultra-nährende Peeling-Maske ist eine kraftvolle Anti-Aging-Behandlung, die mit Rote Bete, Açai-Beeren, Blaubeeren, Himbeeren und Kiwi-Samen hergestellt wird. Diese Maske ist reich an Antioxidantien und sorgt für eine strahlende, jugendliche Haut.\n\nDie Kombination aus natürlichen Fruchtsäuren und sanften Peeling-Partikeln entfernt abgestorbene Hautzellen und fördert die Zellerneuerung. Das Ergebnis ist eine sichtbar glattere, strahlendere und jugendlichere Haut.\n\nWirkungsweise:\n• Sanftes Peeling entfernt abgestorbene Hautzellen\n• Antioxidantien schützen vor freien Radikalen\n• Fördert die natürliche Zellerneuerung\n• Verbessert die Hauttextur und Ausstrahlung\n• Reduziert feine Linien und Fältchen\n• Spendet intensive Feuchtigkeit\n• Natürliche Fruchtsäuren für Glow-Effekt\n• Für alle Hauttypen geeignet",
         price: 21.90,
         category: "bio-cosmetics",
-        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/173/a99/2f-/normal/data.jpg"
+        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/173/a99/2f-/normal/data.jpg",
+        stripeButtonId: "buy_btn_1RooKoDnazw9b0QRj56X2Dpi",
+        ingredients: "Rote Bete, Açai-Beeren, Blaubeeren, Himbeeren, Kiwi-Samen, Vitamin C",
+        usage: "1-2x wöchentlich auf die gereinigte Haut auftragen, 10-15 Minuten einwirken lassen.",
+        benefits: ["Anti-Aging", "Antioxidantien", "Zellerneuerung", "Glow-Effekt"]
       },
-      // Haushaltsprodukte
+      // Haushaltsprodukte (последние 4 товара)
       {
         id: 9,
         name: "Citrus + Sage Soy Wax Candle",
         description: "Premium soy wax candle with bright citrus and herbaceous sage aroma. Smooth initial scent with hints of musk.",
+        detailedDescription: "Unsere Premium Soja-Wachs Kerze mit Citrus und Salbei-Aroma bringt eine erfrischende und entspannende Atmosphäre in Ihr Zuhause. Diese handgegossene Kerze vereint helle Zitrusnoten mit dem erdigen, kräuterigen Duft von Salbei.\n\nDie hochwertige Soja-Wachs-Formel brennt sauber und gleichmäßig für bis zu 50 Stunden. Der komplexe Duft beginnt mit erfrischenden Zitrusnoten, entwickelt sich zu herbaceousem Salbei und endet mit sanften Moschus-Untertönen.\n\nBesonderheiten:\n• 100% natürliches Soja-Wachs\n• Brenndauer: bis zu 50 Stunden\n• Handgegossen mit Liebe\n• Baumwolldocht für sauberes Abbrennen\n• Komplexe Duftkomposition\n• Nachhaltige Verpackung\n• Tierversuchsfrei und vegan\n• Ideal für Entspannung und Meditation",
         price: 45.90,
         category: "home",
-        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/ea8/e3c/7d-/normal/data.jpg"
+        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/ea8/e3c/7d-/normal/data.jpg",
+        stripeButtonId: "buy_btn_1RooL9Dnazw9b0QRtiANsiMF",
+        ingredients: "100% Soja-Wachs, natürliche ätherische Öle, Baumwolldocht",
+        usage: "Vor dem Anzünden Docht auf 0,5cm kürzen. Nicht länger als 4 Stunden brennen lassen.",
+        benefits: ["50h Brenndauer", "Natürlich", "Entspannend", "Handgegossen"]
       },
       {
         id: 10,
         name: "Abundance Ritual Candle",
         description: "Powerful intention candle for abundance in life. Hand poured with love and positive energy focusing on gratitude.",
+        detailedDescription: "Unsere kraftvolle Abundance Ritual Kerze ist speziell für die Manifestation von Fülle in Ihrem Leben entwickelt worden. Diese besondere Kerze wurde mit Liebe und positiver Energie handgegossen und konzentriert sich auf Dankbarkeit und Manifestation.\n\nJede Kerze wird während des Vollmonds hergestellt und mit kraftvollen Kräutern und Kristallen angereichert, die traditionell mit Wohlstand und Fülle in Verbindung gebracht werden. Perfekt für Meditation, Rituale oder einfach um positive Energie in Ihren Raum zu bringen.\n\nRitual-Eigenschaften:\n• Speziell für Fülle-Manifestation entwickelt\n• Handgegossen während des Vollmonds\n• Mit kraftvollen Kräutern angereichert\n• Enthält echte Kristalle (Citrin, Grüner Aventurin)\n• Fokus auf Dankbarkeit und positive Energie\n• Brenndauer: 35-40 Stunden\n• 100% natürliche Inhaltsstoffe\n• Inklusive Ritual-Anleitung",
         price: 29.90,
         category: "home",
-        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/96a/aa3/f0-/normal/AbundanceCandle_BMUO_01.jpg"
+        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/96a/aa3/f0-/normal/AbundanceCandle_BMUO_01.jpg",
+        stripeButtonId: "buy_btn_1RooLTDnazw9b0QRP2RHc6Cs",
+        ingredients: "Soja-Wachs, Bienenwachs, Zimt, Basilikum, Citrin, Grüner Aventurin",
+        usage: "Während der Meditation anzünden und Ihre Intentionen für Fülle setzen.",
+        benefits: ["Manifestation", "Vollmond-Energie", "Mit Kristallen", "Ritual-Anleitung"]
       },
       {
         id: 11,
         name: "Portable Air Humidifier Aroma Oil Diffuser",
         description: "300ml water tank humidifier with colorful night light. 2 spray modes, USB powered, perfect for home, office or car.",
+        detailedDescription: "Unser tragbarer Luftbefeuchter mit Aromatherapie-Funktion ist die perfekte Lösung für ein gesundes Raumklima überall. Mit einem 300ml Wassertank und farbenfrohem Nachtlicht sorgt er für optimale Luftfeuchtigkeit und eine entspannende Atmosphäre.\n\nDas kompakte Design macht ihn ideal für Zuhause, Büro oder Auto. Die USB-Stromversorgung ermöglicht flexiblen Einsatz, während die zwei Sprühmodi individuell anpassbare Befeuchtung bieten.\n\nProduktfeatures:\n• 300ml Wassertank für bis zu 10 Stunden Betrieb\n• 2 Sprühmodi: Kontinuierlich und Intervall\n• 7 wechselnde LED-Farben als Nachtlicht\n• USB-Stromversorgung für maximale Flexibilität\n• Ultra-leise Technologie (unter 35dB)\n• Automatische Abschaltung bei leerem Tank\n• Kompaktes, tragbares Design\n• Aromatherapie-Funktion für ätherische Öle",
         price: 32.90,
         category: "home",
-        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/a31/181/05-/normal/data.png"
+        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/a31/181/05-/normal/data.png",
+        stripeButtonId: "buy_btn_1RooLlDnazw9b0QRvSHDIxpv",
+        ingredients: "ABS-Kunststoff, Ultraschall-Technologie, LED-Beleuchtung",
+        usage: "Mit Wasser füllen, bei Bedarf ätherische Öle hinzufügen und einschalten.",
+        benefits: ["10h Betrieb", "USB-betrieben", "Ultra-leise", "7 LED-Farben"]
       },
       {
         id: 12,
         name: "Ultrasonic Humidifier with LED",
         description: "Mini portable ultrasonic air humidifier & aroma essential oil diffuser with LED night lamp for tranquil atmosphere.",
+        detailedDescription: "Unser Mini-Ultraschall-Luftbefeuchter mit LED-Beleuchtung ist ein eleganter und kompakter Aromatherapie-Diffuser, der für eine ruhige und entspannende Atmosphäre sorgt. Perfekt für kleine Räume wie Schlafzimmer, Büros oder Kinderzimmer.\n\nDie Ultraschall-Technologie erzeugt einen feinen Nebel, der die Luft befeuchtet und gleichzeitig ätherische Öle verteilt. Die sanfte LED-Beleuchtung schafft eine beruhigende Atmosphäre und kann als Nachtlicht verwendet werden.\n\nKompakte Funktionen:\n• Mini-Design perfekt für kleine Räume\n• Ultraschall-Technologie für feinen Nebel\n• Kann als Aromatherapie-Diffuser verwendet werden\n• Sanfte LED-Nachtlicht-Funktion\n• Automatische Abschaltung für Sicherheit\n• Whisper-leiser Betrieb\n• Einfache Ein-Knopf-Bedienung\n• Ideal als Geschenk oder für Reisen",
         price: 24.90,
         category: "home",
-        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/37c/470/44-/normal/data.jpg"
+        image: "https://d2nxps5jx3f309.cloudfront.net/listing_images/attachments/37c/470/44-/normal/data.jpg",
+        stripeButtonId: "buy_btn_1Ro7jnDnazw9b0QRHFMWHoZw",
+        ingredients: "ABS-Kunststoff, Ultraschall-Membrane, LED-Technik",
+        usage: "Mit destilliertem Wasser füllen, 2-3 Tropfen ätherisches Öl hinzufügen.",
+        benefits: ["Kompakt", "Ultraschall", "LED-Licht", "Aromatherapie"]
       }
     ];
 
-    // Shopping Cart System
-    let cart = JSON.parse(localStorage.getItem('zenovo_cart')) || [];
-    
-    // Save cart to localStorage
-    function saveCart() {
-      localStorage.setItem('zenovo_cart', JSON.stringify(cart));
-    }
-    
-    // Stripe Integration
-    let stripe;
-    let elements;
-    let cardElement;
-
-    function initializeStripe() {
-      if (typeof Stripe !== 'undefined' && typeof STRIPE_CONFIG !== 'undefined') {
-        stripe = Stripe(STRIPE_CONFIG.publishableKey);
-        elements = stripe.elements({
-          locale: 'de',
-          fonts: [
-            {
-              cssSrc: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
-            }
-          ]
-        });
-        
-        // Create card element for credit card payments
-        cardElement = elements.create('card', {
-          style: stripeElementStyle || {
-            base: {
-              fontSize: '16px',
-              color: '#374151',
-              fontFamily: 'Inter, sans-serif',
-              '::placeholder': {
-                color: '#9CA3AF',
-              }
-            }
-          },
-          hidePostalCode: true
-        });
-      }
-    }
-    
-    function addToCart(id, name, price, image) {
-      const existingItem = cart.find(item => item.id === id);
-      
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        cart.push({
-          id: id,
-          name: name,
-          price: price,
-          image: image,
-          quantity: 1
-        });
-      }
-      
-      saveCart();
-      updateCartDisplay();
-      updateCartCount();
-      showNotification('✅ Produkt wurde zum Warenkorb hinzugefügt!');
-    }
-    
-    function removeFromCart(id) {
-      cart = cart.filter(item => item.id !== id);
-      saveCart();
-      updateCartDisplay();
-      updateCartCount();
-    }
-    
-    function updateQuantity(id, change) {
-      const item = cart.find(item => item.id === id);
-      if (item) {
-        item.quantity += change;
-        if (item.quantity <= 0) {
-          removeFromCart(id);
-        } else {
-          saveCart();
-          updateCartDisplay();
-          updateCartCount();
-        }
-      }
-    }
-    
-    function updateCartDisplay() {
-      const cartItems = document.getElementById('cartItems');
-      const cartTotal = document.getElementById('cartTotal');
-      const totalPrice = document.getElementById('totalPrice');
-      
-      if (cart.length === 0) {
-        cartItems.innerHTML = '<p class="text-gray-500 text-center py-8">Ihr Warenkorb ist leer</p>';
-        cartTotal.style.display = 'none';
-        return;
-      }
-      
-      cartItems.innerHTML = cart.map(item => `
-        <div class="flex items-center space-x-3 py-3 border-b">
-          <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg" onerror="this.src='https://via.placeholder.com/64x64/f3f4f6/6b7280?text=Bild'">
-          <div class="flex-1">
-            <h4 class="font-medium text-sm">${item.name}</h4>
-            <p class="text-green-600 font-bold">€${item.price.toFixed(2)}</p>
-            <div class="flex items-center space-x-2 mt-1">
-              <button onclick="updateQuantity('${item.id}', -1)" class="w-6 h-6 bg-gray-200 rounded-full text-sm hover:bg-gray-300">-</button>
-              <span class="text-sm">${item.quantity}</span>
-              <button onclick="updateQuantity('${item.id}', 1)" class="w-6 h-6 bg-gray-200 rounded-full text-sm hover:bg-gray-300">+</button>
-              <button onclick="removeFromCart('${item.id}')" class="ml-2 text-red-500 text-sm hover:text-red-700">🗑️</button>
-            </div>
-          </div>
-        </div>
-      `).join('');
-      
-      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      totalPrice.textContent = `€${total.toFixed(2)}`;
-      cartTotal.style.display = 'block';
-    }
-    
-    function updateCartCount() {
-      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-      document.getElementById('cartCount').textContent = count;
-    }
-    
-    // Cart UI functions
-    function openCart() {
-      document.getElementById('cartSidebar').classList.add('open');
-      document.getElementById('cartOverlay').classList.add('open');
-    }
-    
-    function closeCart() {
-      document.getElementById('cartSidebar').classList.remove('open');
-      document.getElementById('cartOverlay').classList.remove('open');
-    }
-    
-    function openCheckout() {
-      if (cart.length === 0) {
-        showNotification('❌ Ihr Warenkorb ist leer!');
-        return;
-      }
-      
-      closeCart();
-      updateCheckoutDisplay();
-      document.getElementById('checkoutModal').classList.add('open');
-      
-      // Setup payment method listeners
-      setTimeout(() => {
-        setupPaymentMethodListeners();
-      }, 100);
-    }
-    
-    function closeCheckout() {
-      document.getElementById('checkoutModal').classList.remove('open');
-      
-      // Unmount card element if mounted
-      if (cardElement) {
-        try {
-          cardElement.unmount();
-        } catch(e) {
-          // Element already unmounted
-        }
-      }
-    }
-    
-    function setupPaymentMethodListeners() {
-      const paymentInputs = document.querySelectorAll('input[name="payment"]');
-      const cardElementContainer = document.getElementById('card-element-container');
-      
-      paymentInputs.forEach(input => {
-        input.addEventListener('change', function() {
-          if (this.value === 'card') {
-            cardElementContainer.style.display = 'block';
-            if (cardElement && !document.getElementById('card-element').hasChildNodes()) {
-              cardElement.mount('#card-element');
-            }
-          } else {
-            cardElementContainer.style.display = 'none';
-            if (cardElement) {
-              try {
-                cardElement.unmount();
-              } catch(e) {
-                // Element already unmounted
-              }
-            }
-          }
-        });
-      });
-    }
-    
-    function updateCheckoutDisplay() {
-      const checkoutItems = document.getElementById('checkoutItems');
-      const checkoutSubtotal = document.getElementById('checkoutSubtotal');
-      const checkoutShipping = document.getElementById('checkoutShipping');
-      const checkoutTotal = document.getElementById('checkoutTotal');
-      
-      if (cart.length === 0) return;
-      
-      checkoutItems.innerHTML = cart.map(item => `
-        <div class="flex justify-between items-center py-2">
-          <div class="flex items-center space-x-3">
-            <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded" onerror="this.src='https://via.placeholder.com/48x48/f3f4f6/6b7280?text=Bild'">
-            <div>
-              <span class="text-sm font-medium">${item.name}</span>
-              <span class="text-xs text-gray-500 block">Menge: ${item.quantity}</span>
-            </div>
-          </div>
-          <span class="font-medium">€${(item.price * item.quantity).toFixed(2)}</span>
-        </div>
-      `).join('');
-      
-      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const shipping = subtotal >= 39 ? 0 : 4.99;
-      const total = subtotal + shipping;
-      
-      checkoutSubtotal.textContent = `€${subtotal.toFixed(2)}`;
-      checkoutShipping.textContent = shipping === 0 ? 'Kostenlos' : `€${shipping.toFixed(2)}`;
-      checkoutTotal.textContent = `€${total.toFixed(2)}`;
-    }
-    
-    // Product display functions
+    // Helper function to truncate description
     function truncateDescription(text, maxLength = 100) {
       if (text.length <= maxLength) return text;
       return text.substring(0, maxLength).trim() + '...';
@@ -981,19 +868,28 @@
         container.innerHTML += `
           <div class="product-card shadow-lg">
             <img src="${product.image}" alt="${product.name}" class="product-image" 
+                 loading="lazy"
                  onerror="this.src='https://via.placeholder.com/400x300/f3f4f6/6b7280?text=Bild+nicht+verfügbar'">
             <div class="product-content">
-              <h3 class="text-lg font-bold text-gray-800 mb-2 leading-tight">${product.name}</h3>
+              <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-3 leading-tight">${product.name}</h3>
               <div class="flex-1">
-                <p class="product-description text-gray-600 text-sm leading-relaxed">
+                <p class="product-description text-gray-600 text-base leading-relaxed">
                   ${shortDescription}
                 </p>
               </div>
-              <div class="product-footer flex justify-between items-center mt-auto">
-                <span class="text-xl font-bold text-green-600">€${product.price.toFixed(2)}</span>
-                <button onclick="addToCart('${product.id}', '${product.name.replace(/'/g, "\\'")}', ${product.price}, '${product.image}')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full transition-colors font-medium text-sm">
-                  In den Warenkorb
+              <div class="product-footer mt-auto">
+                <span class="text-2xl md:text-3xl font-bold text-green-600 text-center block mb-4">€${product.price.toFixed(2)}</span>
+                <!-- Detail Button -->
+                <button class="detail-btn" onclick="openModal(${product.id})">
+                  📋 Detailinfo
                 </button>
+                <!-- Stripe Buy Button -->
+                <div class="px-1">
+                  <stripe-buy-button
+                    buy-button-id="${product.stripeButtonId}"
+                    publishable-key="pk_live_51RlYHeDnazw9b0QRsKskNKyj2uIhk6FKM0Dt8vryvB5A8m5li9fKMnwSOnmBUaQbfsuNaoVTiLQ6XSrx9bzzzSYy00QKhz8fOs">
+                  </stripe-buy-button>
+                </div>
               </div>
             </div>
           </div>
@@ -1020,21 +916,115 @@
       });
     }
     
-    // Notification system
-    function showNotification(message) {
-      const notification = document.createElement('div');
-      notification.className = 'notification';
-      notification.textContent = message;
+    // Modal functions
+    function openModal(productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
       
-      document.body.appendChild(notification);
+      const modalContent = document.getElementById('modalContent');
+      modalContent.innerHTML = `
+        <div class="p-6 md:p-8">
+          <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+            <!-- Product Image -->
+            <div class="space-y-4">
+              <img src="${product.image}" alt="${product.name}" 
+                   class="w-full h-64 md:h-80 object-cover rounded-lg shadow-lg"
+                   onerror="this.src='https://via.placeholder.com/400x300/f3f4f6/6b7280?text=Bild+nicht+verfügbar'">
+              <div class="text-center">
+                <span class="text-3xl md:text-4xl font-bold text-green-600">€${product.price.toFixed(2)}</span>
+              </div>
+            </div>
+            
+            <!-- Product Details -->
+            <div class="space-y-6">
+              <div>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">${product.name}</h2>
+                <div class="space-y-4">
+                  <div>
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">📝 Beschreibung</h3>
+                    <p class="text-gray-600 leading-relaxed whitespace-pre-line">${product.detailedDescription}</p>
+                  </div>
+                  
+                  <div>
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">🌿 Inhaltsstoffe</h3>
+                    <p class="text-gray-600">${product.ingredients}</p>
+                  </div>
+                  
+                  <div>
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">💡 Anwendung</h3>
+                    <p class="text-gray-600">${product.usage}</p>
+                  </div>
+                  
+                  <div>
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">✨ Vorteile</h3>
+                    <div class="flex flex-wrap gap-2">
+                      ${product.benefits.map(benefit => `
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                          ${benefit}
+                        </span>
+                      `).join('')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Purchase Section -->
+              <div class="border-t pt-6">
+                <div class="space-y-4">
+                  <div class="flex items-center space-x-4 text-sm text-gray-500">
+                    <div class="flex items-center">
+                      <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                      </svg>
+                      Kostenloser Versand ab 35€
+                    </div>
+                    <div class="flex items-center">
+                      <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                      </svg>
+                      30 Tage Rückgaberecht
+                    </div>
+                  </div>
+                  
+                  <stripe-buy-button
+                    buy-button-id="${product.stripeButtonId}"
+                    publishable-key="pk_live_51RlYHeDnazw9b0QRsKskNKyj2uIhk6FKM0Dt8vryvB5A8m5li9fKMnwSOnmBUaQbfsuNaoVTiLQ6XSrx9bzzzSYy00QKhz8fOs">
+                  </stripe-buy-button>
+                  
+                  <p class="text-xs text-gray-500 text-center">
+                    🔒 Sichere Zahlung über Stripe • SSL-verschlüsselt
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
       
-      setTimeout(() => notification.classList.add('show'), 100);
-      
-      setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
-      }, 3000);
+      const modal = document.getElementById('productModal');
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden';
     }
+    
+    function closeModal() {
+      const modal = document.getElementById('productModal');
+      modal.classList.remove('show');
+      document.body.style.overflow = 'auto';
+    }
+    
+    // Close modal when clicking outside
+    document.getElementById('productModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
     
     // Mobile menu toggle
     function toggleMobileMenu() {
@@ -1046,154 +1036,8 @@
     function subscribeNewsletter(event) {
       event.preventDefault();
       const email = event.target.querySelector('input[type="email"]').value;
-      showNotification('✅ Vielen Dank! Sie wurden für unseren Newsletter angemeldet.');
+      alert('✅ Vielen Dank! Sie wurden für unseren Newsletter angemeldet.');
       event.target.reset();
-    }
-    
-    // Checkout Form Handler
-    document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const formData = new FormData(e.target);
-      const paymentMethod = formData.get('payment');
-      
-      if (!paymentMethod) {
-        showNotification('❌ Bitte wählen Sie eine Zahlungsmethode aus.');
-        return;
-      }
-      
-      // Validate required fields
-      const requiredFields = ['firstName', 'lastName', 'email', 'address', 'postalCode', 'city', 'country'];
-      for (let field of requiredFields) {
-        if (!formData.get(field)) {
-          showNotification(`❌ Bitte füllen Sie das Feld "${field}" aus.`);
-          return;
-        }
-      }
-      
-      // Calculate total
-      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const shipping = subtotal >= 39 ? 0 : 4.99;
-      const total = (subtotal + shipping) * 100; // Convert to cents
-      
-      // Show processing
-      showNotification('⏳ Bestellung wird verarbeitet...');
-      
-      try {
-        if (paymentMethod === 'card' && stripe && cardElement) {
-          // Handle Stripe payment
-          const { error, paymentIntent } = await stripe.confirmCardPayment(
-            await createPaymentIntent(total, {
-              firstName: formData.get('firstName'),
-              lastName: formData.get('lastName'),
-              email: formData.get('email'),
-              address: formData.get('address'),
-              postalCode: formData.get('postalCode'),
-              city: formData.get('city'),
-              country: formData.get('country')
-            }),
-            {
-              payment_method: {
-                card: cardElement,
-                billing_details: {
-                  name: `${formData.get('firstName')} ${formData.get('lastName')}`,
-                  email: formData.get('email'),
-                  address: {
-                    line1: formData.get('address'),
-                    postal_code: formData.get('postalCode'),
-                    city: formData.get('city'),
-                    country: formData.get('country')
-                  }
-                }
-              }
-            }
-          );
-          
-          if (error) {
-            showNotification(`❌ Zahlung fehlgeschlagen: ${error.message}`);
-            return;
-          }
-          
-          if (paymentIntent.status === 'succeeded') {
-            processSuccessfulOrder(paymentMethod);
-          }
-        } else {
-          // Handle other payment methods (simulated)
-          setTimeout(() => {
-            processSuccessfulOrder(paymentMethod);
-          }, 2000);
-        }
-      } catch (error) {
-        console.error('Payment error:', error);
-        showNotification('❌ Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
-      }
-    });
-    
-    async function createPaymentIntent(amount, customerData) {
-      try {
-        const response = await fetch(`${STRIPE_CONFIG.apiUrl}/create-payment-intent`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            amount: amount,
-            currency: STRIPE_CONFIG.currency,
-            customerData: customerData,
-            orderData: {
-              orderId: `order_${Date.now()}`,
-              items: cart.map(item => ({
-                id: item.id,
-                name: item.name,
-                price: item.price,
-                quantity: item.quantity,
-                image: item.image
-              })),
-              timestamp: new Date().toISOString()
-            }
-          })
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Payment setup failed');
-        }
-
-        const data = await response.json();
-        return data.clientSecret;
-      } catch (error) {
-        console.error('Payment intent creation error:', error);
-        throw new Error(`Zahlung konnte nicht initialisiert werden: ${error.message}`);
-      }
-    }
-    
-    function processSuccessfulOrder(paymentMethod) {
-      // Clear cart
-      cart = [];
-      saveCart();
-      updateCartDisplay();
-      updateCartCount();
-      closeCheckout();
-      
-      // Show success
-      showNotification('🎉 Vielen Dank für Ihre Bestellung! Sie erhalten eine Bestätigungsmail.');
-      
-      // Show detailed success message
-      setTimeout(() => {
-        alert(`Bestellung erfolgreich!\n\n✅ Gewählte Zahlungsmethode: ${getPaymentMethodName(paymentMethod)}\n📦 Lieferung in 2-3 Werktagen\n📧 Bestätigungsmail folgt\n\nVielen Dank für Ihr Vertrauen in ZENOVO!`);
-      }, 1000);
-    }
-    
-    function getPaymentMethodName(method) {
-      const methods = {
-        'paypal': 'PayPal',
-        'card': 'Kreditkarte',
-        'klarna': 'Klarna',
-        'giropay': 'Giropay',
-        'applepay': 'Apple Pay',
-        'googlepay': 'Google Pay'
-      };
-      return methods[method] || method;
     }
     
     // Smooth scrolling for navigation links
@@ -1214,7 +1058,6 @@
     document.addEventListener("DOMContentLoaded", function () {
       displayProducts();
       setupFilters();
-      updateCartCount();
       
       // Add some entrance animations
       setTimeout(() => {
@@ -1222,10 +1065,18 @@
           el.style.animationDelay = `${index * 0.1}s`;
         });
       }, 100);
+      
+      // Register Service Worker
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('✅ Service Worker registered:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('❌ Service Worker registration failed:', error);
+          });
+      }
     });
   </script>
-  
-  <!-- Include Stripe Configuration -->
-  <script src="stripe-config.js"></script>
 </body>
 </html>

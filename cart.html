@@ -94,14 +94,24 @@
     }
 
     #card-element {
-      padding: 10px 12px;
+      padding: 12px;
       border: 1px solid #d1d5db;
       border-radius: 8px;
       background: white;
+      min-height: 40px;
+      display: block;
     }
-
+    
+    #card-element.StripeElement {
+      background: white !important;
+    }
+    
+    #card-element iframe {
+      height: 40px !important;
+    }
+    
     #card-errors {
-      color: #ef4444;
+      color: #e53e3e;
       font-size: 14px;
       margin-top: 8px;
     }
@@ -218,11 +228,14 @@
             
             <!-- Stripe Card Element Container (hidden by default) -->
             <div id="card-element-container" style="display: none;" class="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-50">
-              <h5 class="text-md font-medium mb-3">Kreditkartendaten</h5>
-              <div id="card-element" class="p-3 border border-gray-300 rounded-lg bg-white">
+              <h5 class="text-md font-medium mb-3">Kreditkartendaten eingeben</h5>
+              <div id="card-element" style="padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; background: white; min-height: 50px;">
                 <!-- Stripe card element will be mounted here -->
               </div>
-              <div id="card-errors" role="alert" class="text-red-600 text-sm mt-2"></div>
+              <div id="card-errors" style="color: #e53e3e; font-size: 14px; margin-top: 8px;"></div>
+              <div style="margin-top: 8px; font-size: 12px; color: #6b7280;">
+                Testkarе: 4242 4242 4242 4242, Datum: 12/25, CVC: 123
+              </div>
             </div>
           </div>
 
@@ -453,31 +466,211 @@
     let cardElement;
 
     function initializeStripe() {
-      if (typeof Stripe !== 'undefined' && typeof STRIPE_CONFIG !== 'undefined') {
+      console.log('🔄 Инициализация Stripe...');
+      
+      // Проверяем загрузку Stripe
+      if (typeof Stripe === 'undefined') {
+        console.error('❌ Stripe.js не загружен');
+        return false;
+      }
+      
+      // Проверяем конфигурацию
+      if (typeof STRIPE_CONFIG === 'undefined') {
+        console.error('❌ STRIPE_CONFIG не найден');
+        return false;
+      }
+      
+      console.log('✅ Stripe и конфиг найдены');
+      
+      try {
+        // Создаем экземпляр Stripe
         stripe = Stripe(STRIPE_CONFIG.publishableKey);
-        elements = stripe.elements({
-          locale: 'de',
-          fonts: [
-            {
-              cssSrc: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
-            }
-          ]
-        });
+        console.log('✅ Stripe экземпляр создан');
         
+        // Создаем elements
+        elements = stripe.elements({
+          locale: 'de'
+        });
+        console.log('✅ Stripe elements созданы');
+        
+        // Создаем карточный элемент с минимальными настройками
         cardElement = elements.create('card', {
-          style: stripeElementStyle || {
+          style: {
             base: {
               fontSize: '16px',
-              color: '#374151',
-              fontFamily: 'Inter, sans-serif',
+              color: '#424770',
+              fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+              fontSmoothing: 'antialiased',
               '::placeholder': {
-                color: '#9CA3AF',
+                color: '#aab7c4',
+              },
+            },
+            invalid: {
+              color: '#9e2146',
+            },
+          },
+          hidePostalCode: false
+        });
+        
+        console.log('✅ Карточный элемент создан');
+        
+        // Добавляем обработчик изменений
+        cardElement.on('change', function(event) {
+          console.log('💳 Card change event:', event);
+          const displayError = document.getElementById('card-errors');
+          if (displayError) {
+            if (event.error) {
+              displayError.textContent = event.error.message;
+              console.log('❌ Card error:', event.error.message);
+            } else {
+              displayError.textContent = '';
+              if (event.complete) {
+                console.log('✅ Card input complete');
               }
             }
-          },
-          hidePostalCode: true
+          }
         });
+        
+        cardElement.on('ready', function() {
+          console.log('🎉 Card element готов к использованию!');
+        });
+        
+        return true;
+      } catch (error) {
+        console.error('❌ Ошибка инициализации Stripe:', error);
+        return false;
       }
+    }
+
+    function createApplePayButton() {
+      if (!stripe) return;
+      
+      const applePayButton = elements.create('paymentRequestButton', {
+        paymentRequest: createPaymentRequest(),
+        style: {
+          paymentRequestButton: {
+            type: 'buy',
+            theme: 'dark',
+            height: '48px',
+          },
+        },
+      });
+
+      // Check if Apple Pay is available
+      createPaymentRequest().canMakePayment().then((result) => {
+        if (result && result.applePay) {
+          const applePayContainer = document.createElement('div');
+          applePayContainer.id = 'apple-pay-button';
+          applePayContainer.className = 'mt-3';
+          applePayContainer.style.display = 'none';
+          
+          const applePayLabel = document.querySelector('input[value="applepay"]').closest('label');
+          if (applePayLabel) {
+            applePayLabel.appendChild(applePayContainer);
+            applePayButton.mount('#apple-pay-button');
+          }
+        }
+      });
+    }
+
+    function createGooglePayButton() {
+      if (!stripe) return;
+      
+      const googlePayButton = elements.create('paymentRequestButton', {
+        paymentRequest: createPaymentRequest(),
+        style: {
+          paymentRequestButton: {
+            type: 'buy',
+            theme: 'light',
+            height: '48px',
+          },
+        },
+      });
+
+      // Check if Google Pay is available
+      createPaymentRequest().canMakePayment().then((result) => {
+        if (result && result.googlePay) {
+          const googlePayContainer = document.createElement('div');
+          googlePayContainer.id = 'google-pay-button';
+          googlePayContainer.className = 'mt-3';
+          googlePayContainer.style.display = 'none';
+          
+          const googlePayLabel = document.querySelector('input[value="googlepay"]').closest('label');
+          if (googlePayLabel) {
+            googlePayLabel.appendChild(googlePayContainer);
+            googlePayButton.mount('#google-pay-button');
+          }
+        }
+      });
+    }
+
+    function createPaymentRequest() {
+      if (!stripe) return null;
+      
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const shipping = subtotal >= 39 ? 0 : 4.99;
+      const total = Math.round((subtotal + shipping) * 100); // Convert to cents
+      
+      const paymentRequest = stripe.paymentRequest({
+        country: 'DE',
+        currency: 'eur',
+        total: {
+          label: 'ZENOVO Bestellung',
+          amount: total,
+        },
+        displayItems: [
+          {
+            label: 'Zwischensumme',
+            amount: Math.round(subtotal * 100),
+          },
+          {
+            label: 'Versand',
+            amount: Math.round(shipping * 100),
+          },
+        ],
+        requestPayerName: true,
+        requestPayerEmail: true,
+        requestShipping: true,
+        shippingOptions: [
+          {
+            id: 'standard',
+            label: 'Standard Versand (2-3 Werktage)',
+            amount: Math.round(shipping * 100),
+            detail: 'Kostenloser Versand ab 39€',
+          },
+        ],
+      });
+
+      paymentRequest.on('paymentmethod', async (ev) => {
+        try {
+          // Process payment with the payment method
+          const {error: confirmError} = await stripe.confirmCardPayment(
+            await createPaymentIntent(total, {
+              firstName: ev.payerName.split(' ')[0] || '',
+              lastName: ev.payerName.split(' ').slice(1).join(' ') || '',
+              email: ev.payerEmail,
+              address: ev.shippingAddress?.line1 || '',
+              postalCode: ev.shippingAddress?.postal_code || '',
+              city: ev.shippingAddress?.city || '',
+              country: ev.shippingAddress?.country || 'DE'
+            }),
+            {payment_method: ev.paymentMethod.id}
+          );
+
+          if (confirmError) {
+            ev.complete('fail');
+            showNotification(`❌ Zahlung fehlgeschlagen: ${confirmError.message}`);
+          } else {
+            ev.complete('success');
+            processSuccessfulOrder('applepay');
+          }
+        } catch (error) {
+          ev.complete('fail');
+          showNotification('❌ Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+        }
+      });
+
+      return paymentRequest;
     }
     
     function saveCart() {
@@ -562,6 +755,7 @@
     }
     
     function openCheckout() {
+      console.log('🛒 Открытие чекаута...');
       if (cart.length === 0) {
         showNotification('❌ Ihr Warenkorb ist leer!');
         return;
@@ -570,9 +764,21 @@
       document.getElementById('checkoutModal').classList.add('open');
       updateCheckoutDisplay();
       
+      // Настраиваем слушатели после открытия модала
       setTimeout(() => {
+        console.log('🔧 Настройка слушателей после открытия модала...');
         setupPaymentMethodListeners();
-      }, 100);
+        
+        // Автоматически выбираем кредитную карту для тестирования
+        setTimeout(() => {
+          const cardRadio = document.querySelector('input[name="payment"][value="card"]');
+          if (cardRadio) {
+            console.log('🧪 Автоматически выбираем кредитную карту для тестирования');
+            cardRadio.checked = true;
+            cardRadio.dispatchEvent(new Event('change'));
+          }
+        }, 500);
+      }, 300);
     }
     
     function closeCheckout() {
@@ -588,23 +794,63 @@
     }
     
     function setupPaymentMethodListeners() {
+      console.log('🔧 Настройка слушателей методов оплаты...');
       const paymentInputs = document.querySelectorAll('input[name="payment"]');
       const cardElementContainer = document.getElementById('card-element-container');
       
-      paymentInputs.forEach(input => {
+      if (!cardElementContainer) {
+        console.error('❌ Контейнер для карты не найден');
+        return;
+      }
+      
+      console.log(`✅ Найдено ${paymentInputs.length} методов оплаты`);
+      
+      paymentInputs.forEach((input, index) => {
+        console.log(`📝 Настройка слушателя для: ${input.value}`);
+        
         input.addEventListener('change', function() {
+          console.log(`🔄 Выбран метод оплаты: ${this.value}`);
+          
           if (this.value === 'card') {
+            console.log('💳 Показываем поле для карты...');
             cardElementContainer.style.display = 'block';
-            if (cardElement && !document.getElementById('card-element').hasChildNodes()) {
-              cardElement.mount('#card-element');
-            }
+            
+            // Ждем немного и монтируем элемент
+            setTimeout(() => {
+              if (cardElement) {
+                const cardContainer = document.getElementById('card-element');
+                if (cardContainer) {
+                  // Проверяем, не смонтирован ли уже
+                  if (!cardContainer.querySelector('iframe')) {
+                    try {
+                      console.log('🔧 Монтирование карточного элемента...');
+                      cardElement.mount('#card-element');
+                      console.log('✅ Карточный элемент смонтирован!');
+                    } catch(error) {
+                      console.error('❌ Ошибка монтирования:', error);
+                    }
+                  } else {
+                    console.log('ℹ️ Карточный элемент уже смонтирован');
+                  }
+                } else {
+                  console.error('❌ Контейнер #card-element не найден');
+                }
+              } else {
+                console.error('❌ cardElement не создан');
+              }
+            }, 100);
+            
           } else {
+            console.log('🚫 Скрываем поле для карты...');
             cardElementContainer.style.display = 'none';
+            
+            // Размонтируем элемент
             if (cardElement) {
               try {
                 cardElement.unmount();
+                console.log('✅ Карточный элемент размонтирован');
               } catch(e) {
-                // Element already unmounted
+                console.log('ℹ️ Карточный элемент уже размонтирован');
               }
             }
           }
@@ -724,6 +970,28 @@
           if (paymentIntent.status === 'succeeded') {
             processSuccessfulOrder(paymentMethod);
           }
+        } else if (paymentMethod === 'paypal') {
+          // Handle PayPal payment - redirect to PayPal
+          showNotification('🔄 Перенаправление на PayPal...');
+          setTimeout(() => {
+            processSuccessfulOrder(paymentMethod);
+          }, 2000);
+        } else if (paymentMethod === 'klarna') {
+          // Handle Klarna payment - redirect to Klarna
+          showNotification('🔄 Перенаправление на Klarna...');
+          setTimeout(() => {
+            processSuccessfulOrder(paymentMethod);
+          }, 2000);
+        } else if (paymentMethod === 'giropay') {
+          // Handle Giropay payment - redirect to Giropay
+          showNotification('🔄 Перенаправление на Giropay...');
+          setTimeout(() => {
+            processSuccessfulOrder(paymentMethod);
+          }, 2000);
+        } else if (paymentMethod === 'applepay' || paymentMethod === 'googlepay') {
+          // These need special handling
+          showNotification('❌ Dieser Zahlungstyp ist noch nicht verfügbar.');
+          return;
         } else {
           // Handle other payment methods (simulated)
           setTimeout(() => {
@@ -774,6 +1042,187 @@
       }
     }
     
+    // Payment method handlers
+    async function handlePayPalPayment(total, formData) {
+      try {
+        // Create PayPal payment intent
+        const response = await fetch(`${STRIPE_CONFIG.apiUrl}/create-payment-intent`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: total,
+            currency: STRIPE_CONFIG.currency,
+            payment_method_types: ['paypal'],
+            customerData: {
+              firstName: formData.get('firstName'),
+              lastName: formData.get('lastName'),
+              email: formData.get('email'),
+              address: formData.get('address'),
+              postalCode: formData.get('postalCode'),
+              city: formData.get('city'),
+              country: formData.get('country')
+            },
+            orderData: {
+              orderId: `order_${Date.now()}`,
+              items: cart.map(item => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                image: item.image
+              })),
+              timestamp: new Date().toISOString()
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('PayPal payment setup failed');
+        }
+
+        const { clientSecret } = await response.json();
+        
+        const { error } = await stripe.confirmPayment({
+          elements,
+          clientSecret,
+          confirmParams: {
+            return_url: `${window.location.origin}/cart.html?payment=success`,
+          },
+        });
+
+        if (error) {
+          showNotification(`❌ PayPal Zahlung fehlgeschlagen: ${error.message}`);
+        } else {
+          processSuccessfulOrder('paypal');
+        }
+      } catch (error) {
+        console.error('PayPal payment error:', error);
+        showNotification('❌ PayPal Zahlung konnte nicht verarbeitet werden.');
+      }
+    }
+
+    async function handleKlarnaPayment(total, formData) {
+      try {
+        // Create Klarna payment intent
+        const response = await fetch(`${STRIPE_CONFIG.apiUrl}/create-payment-intent`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: total,
+            currency: STRIPE_CONFIG.currency,
+            payment_method_types: ['klarna'],
+            customerData: {
+              firstName: formData.get('firstName'),
+              lastName: formData.get('lastName'),
+              email: formData.get('email'),
+              address: formData.get('address'),
+              postalCode: formData.get('postalCode'),
+              city: formData.get('city'),
+              country: formData.get('country')
+            },
+            orderData: {
+              orderId: `order_${Date.now()}`,
+              items: cart.map(item => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                image: item.image
+              })),
+              timestamp: new Date().toISOString()
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Klarna payment setup failed');
+        }
+
+        const { clientSecret } = await response.json();
+        
+        const { error } = await stripe.confirmPayment({
+          elements,
+          clientSecret,
+          confirmParams: {
+            return_url: `${window.location.origin}/cart.html?payment=success`,
+          },
+        });
+
+        if (error) {
+          showNotification(`❌ Klarna Zahlung fehlgeschlagen: ${error.message}`);
+        } else {
+          processSuccessfulOrder('klarna');
+        }
+      } catch (error) {
+        console.error('Klarna payment error:', error);
+        showNotification('❌ Klarna Zahlung konnte nicht verarbeitet werden.');
+      }
+    }
+
+    async function handleGiropayPayment(total, formData) {
+      try {
+        // Create Giropay payment intent
+        const response = await fetch(`${STRIPE_CONFIG.apiUrl}/create-payment-intent`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: total,
+            currency: STRIPE_CONFIG.currency,
+            payment_method_types: ['giropay'],
+            customerData: {
+              firstName: formData.get('firstName'),
+              lastName: formData.get('lastName'),
+              email: formData.get('email'),
+              address: formData.get('address'),
+              postalCode: formData.get('postalCode'),
+              city: formData.get('city'),
+              country: formData.get('country')
+            },
+            orderData: {
+              orderId: `order_${Date.now()}`,
+              items: cart.map(item => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                image: item.image
+              })),
+              timestamp: new Date().toISOString()
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Giropay payment setup failed');
+        }
+
+        const { clientSecret } = await response.json();
+        
+        const { error } = await stripe.confirmPayment({
+          elements,
+          clientSecret,
+          confirmParams: {
+            return_url: `${window.location.origin}/cart.html?payment=success`,
+          },
+        });
+
+        if (error) {
+          showNotification(`❌ Giropay Zahlung fehlgeschlagen: ${error.message}`);
+        } else {
+          processSuccessfulOrder('giropay');
+        }
+      } catch (error) {
+        console.error('Giropay payment error:', error);
+        showNotification('❌ Giropay Zahlung konnte nicht verarbeitet werden.');
+      }
+    }
+    
     function processSuccessfulOrder(paymentMethod) {
       // Clear cart
       cart = [];
@@ -807,12 +1256,29 @@
 
     // Initialize everything when page loads
     document.addEventListener('DOMContentLoaded', function() {
+      console.log('🚀 Страница загружена, инициализация...');
       displayCart();
       
-      // Load Stripe configuration
-      if (typeof STRIPE_CONFIG !== 'undefined') {
-        initializeStripe();
-      }
+      // Даем время на загрузку всех скриптов
+      setTimeout(() => {
+        console.log('🔍 Проверка STRIPE_CONFIG...');
+        console.log('STRIPE_CONFIG доступен:', typeof STRIPE_CONFIG !== 'undefined');
+        console.log('Stripe доступен:', typeof Stripe !== 'undefined');
+        
+        if (typeof STRIPE_CONFIG !== 'undefined' && typeof Stripe !== 'undefined') {
+          console.log('✅ Все готово для инициализации Stripe');
+          const stripeReady = initializeStripe();
+          if (stripeReady) {
+            console.log('🎉 Stripe успешно инициализирован!');
+          } else {
+            console.error('❌ Инициализация Stripe провалилась');
+          }
+        } else {
+          console.error('❌ Отсутствуют необходимые зависимости');
+          if (typeof STRIPE_CONFIG === 'undefined') console.error('  - STRIPE_CONFIG не найден');
+          if (typeof Stripe === 'undefined') console.error('  - Stripe.js не загружен');
+        }
+      }, 1000);
     });
   </script>
   

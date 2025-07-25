@@ -83,27 +83,28 @@ app.post('/create-payment-intent', async (req, res) => {
 
     // Create Payment Intent
     const paymentIntent = await stripeInstance.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convert to cents
+      amount: Math.round(amount), // Amount should already be in cents
       currency: currency.toLowerCase(),
       customer: customer.id,
+      payment_method_types: req.body.payment_method_types || ['card'],
       automatic_payment_methods: {
         enabled: true,
+        allow_redirects: 'always'
       },
       metadata: {
         orderId: orderData?.orderId || `order_${Date.now()}`,
         customerEmail: customerData.email,
-        customerName: customerData.name || '',
+        customerName: `${customerData.firstName} ${customerData.lastName}` || '',
         orderData: JSON.stringify(orderData || {})
       },
       description: `ZENOVO Order - ${orderData?.items?.length || 0} items`,
       shipping: customerData.address ? {
-        name: customerData.name,
+        name: `${customerData.firstName} ${customerData.lastName}`,
         address: {
-          line1: customerData.address.line1,
-          line2: customerData.address.line2,
-          city: customerData.address.city,
-          postal_code: customerData.address.postal_code,
-          country: customerData.address.country || 'DE'
+          line1: customerData.address,
+          city: customerData.city,
+          postal_code: customerData.postalCode,
+          country: customerData.country || 'DE'
         }
       } : undefined
     });

@@ -1,0 +1,28 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://zenovo.de/sitemap.xml
+
+# Disallow sensitive areas
+Disallow: /server/
+Disallow: /stripe-config.js
+Disallow: /PAYMENT_SETUP.md
+
+# Allow important pages
+Allow: /index.html
+Allow: /catalog.html
+Allow: /about.html
+Allow: /contact.html
+Allow: /datenschutz.html
+Allow: /impressum.html
+
+# Media files
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.webp
+Allow: /*.svg
+
+# Crawl delay (optional)
+Crawl-delay: 1

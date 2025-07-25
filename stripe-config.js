@@ -6,7 +6,7 @@ const STRIPE_CONFIG = {
     publishableKey: 'pk_live_51RlYHeDnazw9b0QRsKskNKyj2uIhk6FKM0Dt8vryvB5A8m5li9fKMnwSOnmBUaQbfsuNaoVTiLQ6XSrx9bzzzSYy00QKhz8fOs',
     
     // API настройки
-    apiUrl: 'https://zenovo-store.site/', // Замените на ваш production URL
+    apiUrl: 'http://localhost:3001', // Локальный сервер для тестирования
     
     // Настройки
     currency: 'eur',
